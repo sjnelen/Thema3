@@ -1,0 +1,13 @@
+<!-- imports the base.html file using jinja templates -->
+{% extends 'base.html' %}
+
+{% block header %}
+    <h2>{% block title %}Import Fasta{% endblock title %}</h2>
+{% endblock header %}
+
+{% block content %}
+	<form action="{{ url_for("pages.handle_upload") }}" method="post" enctype="multipart/form-data">
+        <input type="file" id="myFile" name="filename">
+        <input type="submit" name="submit">
+    </form>
+{% endblock %}
