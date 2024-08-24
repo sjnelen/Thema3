@@ -5,6 +5,7 @@ __author__ = 'Sam Nelen'
 __version__ = '2024.08.22'
 
 from flask import Blueprint, render_template, request
+from app import ReadFasta
 
 bp = Blueprint('pages', __name__)
 
@@ -29,8 +30,15 @@ def import_fasta():
 def handle_upload():
     file = request.files['filename']
     if file and allowed_file(file.filename):
-        file.save(file.filename)
-        print(file.filename)
-        return render_template("home.html")
+        file.save(f"temp/{file.filename}")
+        filepath = f"temp/{file.filename}"
+        headers = ReadFasta(filepath, None).get_headers()
+        if len(headers) == 1:
+            return render_template("fasta.html", filename=file.filename, headers=headers)
+        elif len(headers) > 1:
+            return "You uploaded a multi sequence FASTA file"
+        else:
+            return "Something is wrong with the fasta file, no header was found"
     else:
-        return f"invalid filetype {file.filename}"
+        # Need to implement an error page
+        return f"invalid filetype: {file.filename}"
