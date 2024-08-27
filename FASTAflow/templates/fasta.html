@@ -7,10 +7,12 @@
 {% endblock %}
 
 {% block content %}
-	{% for header in headers %}
-		<ul>
-            <li>{{ header }}</li>
-        </ul>
-	{% endfor %}
-	
+    <pre id="sequence">{{ header[0] }}<br>{{ seq[header[0]] }}</pre>
+    <form>
+        <input type="checkbox" id="gc_content" name="gc_content" value="gc_content">
+        <label for="gc_content">Calculate GC content</label><br>
+        <input type="checkbox" id="to_protein" name="to_protein" value="to_protein">
+        <label for="to_protein">Form protein</label><br>
+        <input type="submit" name="submit" value="submit">
+    </form>
 {% endblock %}

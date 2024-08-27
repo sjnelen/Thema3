@@ -32,12 +32,16 @@ def handle_upload():
     if file and allowed_file(file.filename):
         file.save(f"temp/{file.filename}")
         filepath = f"temp/{file.filename}"
-        headers = ReadFasta(filepath, None).get_headers()
+        headers = ReadFasta(filepath).get_headers()
+        seq = ReadFasta(filepath).read_file()
         if len(headers) == 1:
-            return render_template("fasta.html", filename=file.filename, headers=headers)
+            return render_template("fasta.html",
+                                   filename=file.filename, header=headers, seq=seq)
         elif len(headers) > 1:
-            return "You uploaded a multi sequence FASTA file"
+            return render_template("multi_fasta.html",
+                                   filename=file.filename, headers=headers, seq=seq)
         else:
+            # Need to implement an error page
             return "Something is wrong with the fasta file, no header was found"
     else:
         # Need to implement an error page

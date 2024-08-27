@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block header %}
+	<h2>{% block title %}
+		Single seq fasta file
+	{% endblock %}</h2>
+{% endblock %}
+
+{% block content %}
+	{% for header in headers %}
+		<ul>
+            <li><small>{{ header }}<br>{{ seq[header] }}</small></li>
+        </ul>
+	{% endfor %}
+	
+{% endblock %}

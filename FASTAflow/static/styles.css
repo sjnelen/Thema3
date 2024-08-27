@@ -32,3 +32,12 @@ main {
   width: 80%;
   margin: 0 auto;
 }
+
+#sequence {
+  text-align: left;
+  background-color: #f4f4f4;
+  padding: 10px;
+  border: 1px solid #ddd;
+  white-space: pre-wrap; /* Preserve formatting and allow wrapping */
+  word-wrap: break-word;
+}
