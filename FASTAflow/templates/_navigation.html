@@ -1,7 +1,16 @@
-<nav>
-    <ul>
-        <li><a href="{{ url_for('pages.home') }}">Home</a></li>
-        <li><a href="{{ url_for('pages.about') }}">About</a></li>
-        <li><a href="{{ url_for('pages.import_fasta') }}">Import fasta</a></li>
-    </ul>
+<nav class="navbar navbar-expand-md bg-body-secondary">
+    <div class="container-fluid">
+        <header class="navbar-brand">FASTAflow</header>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navBarNav"
+                aria-controls="navBarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navBarNav">
+            <div class="navbar-nav">
+                <a class="nav-link" href="{{ url_for('pages.home') }}">Home</a>
+                <a class="nav-link" href="{{ url_for('pages.about') }}">About</a>
+                <a class="nav-link" href="{{ url_for('pages.import_fasta') }}">Import fasta</a>
+            </div>
+        </div>
+    </div>
 </nav>

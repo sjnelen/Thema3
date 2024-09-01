@@ -1,13 +1,44 @@
 <!-- imports the base.html file using jinja templates -->
 {% extends 'base.html' %}
 
-{% block header %}
-    <h2>{% block title %}Import Fasta{% endblock title %}</h2>
-{% endblock header %}
-
 {% block content %}
-	<form action="{{ url_for("pages.handle_upload") }}" method="post" enctype="multipart/form-data">
-        <input type="file" id="myFile" name="filename">
-        <input type="submit" name="submit" value="submit">
-    </form>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="mb-4">Upload Your FASTA File</h2>
+
+                <p class="lead">
+                    Welcome to this FASTA file analysis tool! Upload your FASTA file with genetic sequences and start
+                    a simple analysis.
+                </p>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">What can you upload</h5>
+                        <p class="card-text">
+                            For this application to work only the FASTA file extension is allowed.
+                            Those are the following extensions: '.fasta', '.fas', '.fa', '.fna', '.ffn', '.faa', '.mpfa', '.frn'.
+                            Any file uploaded with a different extension will be blocked.
+                        </p>
+                    </div>
+                </div>
+
+                <p>
+                    To get started, simply choose your FASTA file and click the "Upload and Analyze" button.
+                    Both single and multiple sequence FASTA files are allowed.
+                </p>
+
+                <form method="post" action="{{ url_for("pages.handle_upload") }}" enctype="multipart/form-data">
+                    <div class="mb-4">
+                        <label for="fastaFile" class="form-label">Select your FASTA file:</label>
+                        <input class="form-control" type="file" id="fastaFile" name="fastaFile">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload and Analyze</button>
+                </form>
+            </div>
+            <div class="col-lg-4 d-none d-lg-block align-content-center">
+                <img src="/static/img/DNAhelix.jpg" alt="DNA double helix illustration" class="img-fluid rounded">
+            </div>
+        </div>
+    </div>
 {% endblock %}

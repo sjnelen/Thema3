@@ -7,6 +7,10 @@ __version__ = '2024.08.22'
 class ReadFasta:
 
     def __init__(self, file):
+        """
+
+        :param file:
+        """
         self.file = file
         self.headers = []
         self.fasta_dict = {}
@@ -15,7 +19,7 @@ class ReadFasta:
     def get_headers(self):
         """
         Opens the file and loops over every line, where the lines starting with a '>'
-        are put in the headers lis
+        are put in the headers list
         :return: The headers list
         """
         with open(self.file, 'r') as f:
@@ -30,13 +34,14 @@ class ReadFasta:
         Reads the fasta file and pairs the header and sequence in a dictionary
         :return: The dictionary of headers and sequence
         """
+        current_header = None
         with open(self.file, 'r') as f:
             for line in f:
                 line = line.strip()
                 if line.startswith('>'):
                     current_header = line
                     self.fasta_dict[current_header] = ''
-                else:
+                elif current_header:
                     self.fasta_dict[current_header] += line
 
         return self.fasta_dict

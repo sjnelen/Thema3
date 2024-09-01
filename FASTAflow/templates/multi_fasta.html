@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 
-{% block header %}
-	<h2>{% block title %}
-		Single seq fasta file
-	{% endblock %}</h2>
-{% endblock %}
-
 {% block content %}
-	{% for header in headers %}
-		<ul>
-            <li><small>{{ header }}<br>{{ seq[header] }}</small></li>
-        </ul>
-	{% endfor %}
-	
+    {% for header in headers %}
+    	<pre id="sequence">{{ header }}<br>{{ seq_dict[header] }}</pre>
+    {% endfor %}
+    <form action="{{ url_for("pages.result") }}" method="post" enctype="multipart/form-data">
+        <input type="checkbox" id="gc_content" name="analysis_options" value="gc_content">
+        <label for="gc_content">Calculate GC content</label>
+        <input type="checkbox" id="to_protein" name="analysis_options" value="to_protein">
+        <label for="to_protein">Form protein</label>
+        <input type="checkbox" id="seq_length" name="analysis_options" value="seq_length">
+        <label for="seq_length">Sequence length</label>
+        <input type="submit" name="submit" value="submit">
+    </form>
 {% endblock %}
