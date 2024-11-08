@@ -2,7 +2,7 @@
 
 {% block content %}
     {% for header in headers %}
-    	<pre id="sequence">{{ header }}<br>{{ seq_dict[header] }}</pre>
+        <pre id="sequence">{{ header }}<br>{{ seq_dict[header] }}</pre>
     {% endfor %}
     <form action="{{ url_for("pages.result") }}" method="post" enctype="multipart/form-data">
         <input type="checkbox" id="gc_content" name="analysis_options" value="gc_content">

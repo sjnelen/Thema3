@@ -4,6 +4,8 @@ All the function that are performed in the background
 __author__ = 'Sam Nelen'
 __version__ = '2024.08.22'
 
+from FASTAflow.models import db, FastaEntry
+
 
 class Results:
 
@@ -14,33 +16,57 @@ class Results:
 
     def run_analysis(self):
         if 'gc_content' in self.options:
-            self.results['gc_content'] = self.gc_content()
+            self.gc_content()
         if 'seq_length' in self.options:
-            self.results['seq_length'] = self.seq_length()
+            self.seq_length()
         if 'to_protein' in self.options:
             self.results['to_protein'] = self.to_protein()
+        if 'nuc_freq' in self.options:
+            self.nucleotide_frequency()
 
         return self.results
 
 
     def gc_content(self):
-        gc_results = {}
+        #gc_results = {}
         for header, seq in self.seq_dict.items():
             total = len(seq)
             g = seq.count('G')
             c = seq.count('C')
-            gc_results[header] = f'{(g+c)/total * 100:.2f} %'
+            #gc_results[header] = f'{(g+c)/total * 100:.2f} %'
 
-        return gc_results
+            entry = FastaEntry.query.filter_by(header = header).first()
+            entry.gc_content = round((g+c) / total * 100, 2)
+            db.session.commit()
+
+        return None
+
+    def nucleotide_frequency(self):
+        #nuc_results = {}
+        nuc_freq = {}
+        for header, seq in self.seq_dict.items():
+            for nuc in seq:
+                nuc_freq[nuc] = round(nuc_freq.get(nuc, 0) + 1/len(seq) * 100, 2)
+            #nuc_results[header] = nuc_freq
+
+            entry = FastaEntry.query.filter_by(header = header).first()
+            entry.nuc_freq = nuc_freq
+            db.session.commit()
+
+        return None
 
 
     def seq_length(self):
-        length_result = {}
+        #length_result = {}
         for header, seq in self.seq_dict.items():
             length = len(seq)
-            length_result[header] = length
+            #length_result[header] = length
 
-        return length_result
+            entry = FastaEntry.query.filter_by(header = header).first()
+            entry.sequence_length = length
+            db.session.commit()
+
+        return None
 
 
     def to_protein(self):

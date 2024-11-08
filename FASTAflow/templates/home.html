@@ -2,23 +2,37 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-lg-8 mx-auto text-center">
-                <h1 class="display-4 mb-4">Welcome to FASTAflow</h1>
-                <p class="lead mb-5">Unlock the secrets of genetic sequences with our FASTA analysis tool.</p>
-            </div>
+    <div class="container-md mt-4">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 mb-4">Welcome to FASTAflow</h1>
+            <p class="lead mb-5">Unlock the secrets of genetic sequences with our FASTA analysis tool.</p>
         </div>
-
-        <div class="row mb-5">
-            <div class="col-md-4">
-                <div class="card h-100">
+        <div class="row gy-4 mb-5">
+            <div class="col-md-6">
+                <div class="card h-100 bg-warning-subtle">
                     <div class="card-body">
                         <h5 class="card-title">Analyze FASTA Files</h5>
-                        <p class="card-text">Upload your FASTA files and get comprehensive analysis results.
-                            Support for single and multiple sequence FASTA files.
+                        <p class="card-text">
+                            Upload your FASTA files and get comprehensive analysis results.
+                            There is support for single and multiple sequence FASTA files.
                         </p>
-                        <a href="{{ url_for('pages.import_fasta') }}" class="btn btn-primary">Start Analysis</a>
+                    </div>
+                    <div class="card-footer border-0 bg-warning-subtle">
+                        <a href="{{ url_for('pages.import_fasta') }}" class="btn btn-warning">Start Analysis!</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100 bg-warning-subtle">
+                    <div class="card-body">
+                        <h5 class="card-title">About FASTA Files</h5>
+                        <p class="card-text">
+                            Learn more about the background of FASTA files, like the layout and function
+                            of the files
+                        </p>
+                    </div>
+                    <div class="card-footer border-0 bg-warning-subtle">
+                        <a href="{{ url_for('pages.about') }}" class="btn btn-warning">Learn More!</a>
                     </div>
                 </div>
             </div>

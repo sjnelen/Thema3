@@ -1,14 +1,11 @@
-#sequence {
-  text-align: left;
-  background-color: #f4f4f4;
-  padding: 10px;
-  border: 1px solid #ddd;
-  white-space: pre-wrap; /* Preserve formatting and allow wrapping */
-  word-wrap: break-word;
+/* Base styling making the footer stick to the bottom of the page */
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
 }
 
-table {
-  overflow-x: auto;
-  font-size: medium;
+main {
+    flex: 1;
 }
 

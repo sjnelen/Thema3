@@ -12,12 +12,15 @@
     <header class="container-fluid bg-body-secondary">
         {% include '_navigation.html' %}
     </header>
-    <main class="container">
+    <main>
         {% block content %}Nothing to show here{% endblock content %}
     </main>
-    <footer class="container">
-        Sam Nelen<br>
-        s.j.nelen@st.hanze.nl
-    </footer>
+    <div class="d-flex align-content-end">
+        <footer class="container-fluid bg-body-secondary">
+            <p class="container-fluid text-muted text-center">
+                Sam Nelen <br>s.j.nelen@st.hanze.nl
+            </p>
+        </footer>
+    </div>
 </body>
 </html>

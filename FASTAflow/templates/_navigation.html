@@ -1,6 +1,11 @@
 <nav class="navbar navbar-expand-md bg-body-secondary">
     <div class="container-fluid">
-        <header class="navbar-brand">FASTAflow</header>
+        <a class="navbar-brand" href="{{ url_for('pages.home') }}">
+            <img src="/static/img/logo.svg" alt="Hanze logo" width="88" height="28">
+            <h5 style="font-weight: normal">
+                FASTAflow
+            </h5>
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navBarNav"
                 aria-controls="navBarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
