@@ -81,3 +81,4 @@ fabric.properties
 
 # Temporary directory
 /temp
+/FASTAflow/static/plots
