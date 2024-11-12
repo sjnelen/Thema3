@@ -5,7 +5,7 @@ db = SQLAlchemy()
 
 class FastaEntry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    header = db.Column(db.String(500), nullable=False)
+    header = db.Column(db.String(500), nullable=False, unique=True)
     filepath = db.Column(db.String(500), nullable=False)
     sequence_length = db.Column(db.Integer)
     gc_content = db.Column(db.Float)

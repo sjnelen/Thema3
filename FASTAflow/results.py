@@ -20,7 +20,7 @@ class Results:
         if 'seq_length' in self.options:
             self.seq_length()
         if 'to_protein' in self.options:
-            self.results['to_protein'] = self.to_protein()
+            self.results['to_protein'] = self.protein_translation()
         if 'nuc_freq' in self.options:
             self.nucleotide_frequency()
 
@@ -69,9 +69,8 @@ class Results:
         return None
 
 
-    def to_protein(self):
+    def protein_translation(self):
         protein_result = {}
-        amino_acid = ""
         aa_table = {
             'ATA': 'I', 'ATC': 'I', 'ATT': 'I', 'ATG': 'M',
             'ACA': 'T', 'ACC': 'T', 'ACG': 'T', 'ACT': 'T',
@@ -92,6 +91,7 @@ class Results:
         }
 
         for header, seq in self.seq_dict.items():
+            amino_acid = ""
             for i in range(0,len(seq),  3):
                 codon = seq[i:i+3]
                 amino_acid += aa_table.get(codon, '?')

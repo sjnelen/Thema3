@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h2>{% block title %}Analysis Results{% endblock title %}</h2>
+{% endblock header %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">Plots for {{ header }}</h3>
+                <!-- Collapse all/expand all buttons -->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-light btn-sm" data-bs-toggle="collapse"
+                            data-bs-target=".plot-collapse" aria-expanded="false">
+                        Toggle All Plots
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb04">
+                        <button class="btn btn-secondary w-100 mb-2" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#pieChart" aria-expanded="true">
+                            Nucleotide distribution (Pie chart)
+                        </button>
+                        <div class="collapse show plot-collapse" id="pieChart">
+                            <div class="card">
+                                <div class="card-body">
+                                    <img src="{{ url_for('static', filename='plots/' + pie_plot_filename) }}"
+                                         class="img-fluid"
+                                         alt="Nucleotide frequency pie chart">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-6 mb04">
+                        <button class="btn btn-secondary w-100 mb-2" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#barChart" aria-expanded="false">
+                            Nucleotide distribution (Bar chart)
+                        </button>
+                        <div class="collapse show plot-collapse" id="barChart">
+                            <div class="card">
+                                <div class="card-body">
+                                    <img src="{{ url_for('static', filename='plots/' + bar_plot_filename) }}"
+                                         class="img-fluid"
+                                         alt="Nucleotide frequency pie chart">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ url_for('pages.result') }}" class="btn btn-secondary">Back to Results</a>
+        </div>
+    </div>
+{% endblock content %}

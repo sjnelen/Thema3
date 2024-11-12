@@ -14,7 +14,7 @@ from FASTAflow import pages
 
 
 def create_app():
-    webapp = Flask(__name__)
+    webapp = Flask(__name__, static_folder='static')
 
     # Create a 'database' directory in your project root
     db_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database')

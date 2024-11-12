@@ -14,7 +14,6 @@ from read_fasta import ReadFasta
 from results import Results
 from plots import Plots
 
-
 bp = Blueprint('pages', __name__)
 
 ALLOWED_EXTENSIONS = {'fasta', 'fas', 'fa', 'fna', 'ffn', 'faa', 'mpfa', 'frn'}
@@ -55,17 +54,17 @@ def handle_upload():
 
         for header in headers:
             entry = FastaEntry(
-                header = header,
-                filepath = filepath)
+                header=header,
+                filepath=filepath)
             db.session.add(entry)
         db.session.commit()
 
-        entries = FastaEntry.query.filter_by(filepath = filepath).all()
+        entries = FastaEntry.query.filter_by(filepath=filepath).all()
 
         #session['seq_dict'] = seq_dict
         #session['headers'] = headers
         if entries:
-            return render_template('fasta.html', headers = entries)
+            return render_template('fasta.html', headers=entries)
         else:
             # Need to implement an error page
             return 'Something is wrong with the fasta file, no headers were found'
@@ -74,7 +73,7 @@ def handle_upload():
         return f'invalid filetype: {file.filename}'
 
 
-@bp.route('/result', methods=['POST'])
+@bp.route('/result', methods=['POST', 'GET'])
 def result():
     # Get a list with the analysis options
     analysis_options = request.form.getlist('analysis_options')
@@ -86,17 +85,34 @@ def result():
 
     # Get the filepath and filter the headers based on the filepath
     filepath = latest_entry.filepath
-    headers = [header[0] for header in
-               FastaEntry.query.filter_by(filepath=filepath).with_entities(FastaEntry.header).all()]
 
     # Get the sequence from the file and run the analysis based on the chosen options
     seq_dict = ReadFasta(filepath).read_file()
     results = Results(analysis_options, seq_dict)
     results.run_analysis()
 
-    protein_sequences = results.to_protein()
+    protein_sequences = results.protein_translation()
 
-    entries = FastaEntry.query.filter_by(filepath = filepath).all()
+    entries = FastaEntry.query.filter_by(filepath=filepath).all()
 
     return render_template('results.html',
-                           options = analysis_options, protein = protein_sequences, entries = entries)
+                           options=analysis_options, protein=protein_sequences, entries=entries)
+
+
+@bp.route('/plots/<header>')
+def plots(header):
+    #Get the entry in the database based on the header
+    entry = FastaEntry.query.filter_by(header=header).first()
+
+    #Get the different nucleotide frequencies
+    nuc_freq = entry.nuc_freq
+
+    #Create the plots
+    graphs = Plots(nuc_freq)
+    pie_plot_filename = graphs.pie_plot(header)
+    bar_plot_filename = graphs.bar_plot(header)
+
+    return render_template('plots.html',
+                           header=header,
+                           pie_plot_filename = pie_plot_filename,
+                           bar_plot_filename = bar_plot_filename)
