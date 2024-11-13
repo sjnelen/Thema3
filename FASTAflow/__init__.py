@@ -1,11 +1,19 @@
+"""The main Flask web application for FASTAflow
+
+This module initializes the Flask application, sets up the database configuration,
+and creates the app's blueprints. It provides the core setup functionality for the
+web application.
+
+Example:
+    To create and run the application:
+        app = create_app()
+        app.run(port=8000)
 """
-The main part of the flask web application
-"""
+
 __author__ = 'Sam Nelen'
 __version__ = '2024.08.22'
 
 import os
-import secrets
 
 from flask import Flask
 
@@ -14,6 +22,17 @@ from FASTAflow import pages
 
 
 def create_app():
+    """Creates and configures the Flask application.
+
+    Creates a new Flask application instance, configures the database connection,
+    and initializes tables.
+
+    Returns:
+        Flask: A configured Flask application.
+
+    Raises:
+        OSError: If database directory creation fails.
+    """
     webapp = Flask(__name__, static_folder='static')
 
     # Create a 'database' directory in your project root
@@ -31,7 +50,6 @@ def create_app():
         db.create_all()
         print(f'database created at {db_path}')
 
-    webapp.secret_key = os.environ.get('FLASK_SECRET_KEY', secrets.token_hex(32))
     webapp.register_blueprint(pages.bp)
     return webapp
 

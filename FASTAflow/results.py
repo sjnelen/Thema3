@@ -1,5 +1,12 @@
-"""
-All the function that are performed in the background
+"""Sequence analysis module for the FASTAflow application
+
+This module provides various sequence analysis functions including GC content
+calculations, nucleotide frequency analysis, sequence length calculations,
+and protein translation.
+
+Typical usage example:
+    analyzer = Results(['gc_content', 'seq_length'], sequences)
+    results = analyzer.run_analysis()
 """
 __author__ = 'Sam Nelen'
 __version__ = '2024.08.22'
@@ -8,13 +15,33 @@ from FASTAflow.models import db, FastaEntry
 
 
 class Results:
+    """Sequence analysis class for various analysis methods
+
+    Attributes:
+        options (list): List of selected analysis options.
+        seq_dict (dict): Dictionary of sequences to analyze.
+        results (dict): Dictionary to store sequence analysis results
+    """
 
     def __init__(self, options, seq_dict):
+        """Initializes the results class
+
+        Args:
+            options (list): List of selected analysis options.
+            seq_dict (dict): Dictionary of sequences to analyze.
+        """
+
         self.options = options
         self.seq_dict = seq_dict
         self.results = {}
 
     def run_analysis(self):
+        """Executes the selected analyze options
+
+        Returns:
+            dict: Dictionary of sequence analysis results.
+        """
+
         if 'gc_content' in self.options:
             self.gc_content()
         if 'seq_length' in self.options:
@@ -28,6 +55,11 @@ class Results:
 
 
     def gc_content(self):
+        """Calculates the GC content of the sequences.
+
+        Updates the database with GC content percentages for each sequence.
+        """
+
         #gc_results = {}
         for header, seq in self.seq_dict.items():
             total = len(seq)
@@ -42,6 +74,10 @@ class Results:
         return None
 
     def nucleotide_frequency(self):
+        """Calculates the nucleotide frequency of the sequences.
+
+        Updates the database with nucleotide frequency for each sequence.
+        """
         #nuc_results = {}
         nuc_freq = {}
         for header, seq in self.seq_dict.items():
@@ -57,6 +93,10 @@ class Results:
 
 
     def seq_length(self):
+        """Calculates the sequence length of the sequences.
+
+        Updates the database with sequence length for each sequence.
+        """
         #length_result = {}
         for header, seq in self.seq_dict.items():
             length = len(seq)
@@ -70,6 +110,15 @@ class Results:
 
 
     def protein_translation(self):
+        """Translates DNA sequences into protein sequences.
+
+        Returns:
+            dict: Dictionary with headers as keys and protein sequences as values.
+
+        Note:
+            Uses standard genetic code for translation.
+            Unknown codons are represented with a '?'.
+        """
         protein_result = {}
         aa_table = {
             'ATA': 'I', 'ATC': 'I', 'ATT': 'I', 'ATG': 'M',

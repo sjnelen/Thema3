@@ -1,6 +1,14 @@
+"""Visualization module for sequence analysis results
+
+This module provides plotting capabilities for visualizing multiple
+sequence analysis results using matplotlib.
+
+Typical usage example:
+    plots = Plots(nucleotide_frequencies)
+    pie_chart = plots.pie_chart(sequence_header)
+    bar_chart = plots.bar_chart(sequence_header)
 """
-All the plots that are needed to show the results
-"""
+
 __author__ = 'Sam Nelen'
 __version__ = '2024.08.22'
 
@@ -10,11 +18,34 @@ from werkzeug.utils import secure_filename
 
 
 class Plots:
+    """Creates visualization plots
+
+    Attributes:
+        nuc_freq (dict): Dictionary of nucleotide frequencies
+    """
 
     def __init__(self, nuc_freq):
+        """Initializes the Plots class
+
+        Args:
+            nuc_freq (dict): Dictionary of nucleotide frequencies
+        """
+
         self.nuc_freq = nuc_freq
 
     def bar_plot(self, header):
+        """Creates a bar chart
+
+        Args:
+            header (str): Sequence header to use as the plot title
+
+        Returns:
+            str: Filename of the saved plot
+
+        Raises:
+            OSError: If unable to save the plot
+        """
+
         nuc_freq = self.nuc_freq
         plt.rcParams.update({'font.size': 20})
 
@@ -36,6 +67,17 @@ class Plots:
         return safe_header
 
     def pie_plot(self, header):
+        """Creates a pie chart
+
+        Args:
+            header (str): Sequence header to use as the plot title
+
+        Returns:
+            str: Filename of the saved plot
+
+        Raises:
+            OSError: If unable to save the plot
+        """
         nuc_freq = self.nuc_freq
         plt.rcParams.update({'font.size': 20})
 

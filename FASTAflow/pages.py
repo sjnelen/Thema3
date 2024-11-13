@@ -1,6 +1,13 @@
+"""Page routing and request handling for the application
+
+This module contains all the route definitions and request handlers for the
+web application. It controls the file uploads, processing, and result
+visualization.
+
+Example:
+    bp = Blueprint('pages', __name__)
 """
-All the pages for the flask web application
-"""
+
 __author__ = 'Sam Nelen'
 __version__ = '2024.08.22'
 
@@ -20,6 +27,15 @@ ALLOWED_EXTENSIONS = {'fasta', 'fas', 'fa', 'fna', 'ffn', 'faa', 'mpfa', 'frn'}
 
 
 def allowed_file(filename):
+    """Validates if the uploaded file has a FASTA extension.
+
+    Args:
+        filename (string): The name of the uploaded file.
+
+    Returns:
+        bool: True if the file extension is allowed, False otherwise.
+    """
+
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
@@ -40,6 +56,21 @@ def import_fasta():
 
 @bp.route('/upload', methods=['POST'])
 def handle_upload():
+    """Handles the FASTA file uploads and processes them
+
+    Processes the uploaded file by:
+    1. Validating the file type
+    2. Saving to a temporary location
+    3. Extracting the headers
+    4. Storing in the database
+
+    Returns:
+        str: Rendered HTML template with headers or error message.
+
+    Raises:
+        werkzeug.exceptions.BadRequest: If there is no file uploaded.
+    """
+
     if 'fastaFile' not in request.files:
         abort(400, description="No file part in the request.")
 
@@ -61,8 +92,6 @@ def handle_upload():
 
         entries = FastaEntry.query.filter_by(filepath=filepath).all()
 
-        #session['seq_dict'] = seq_dict
-        #session['headers'] = headers
         if entries:
             return render_template('fasta.html', headers=entries)
         else:
