@@ -43,6 +43,8 @@ def create_app():
     webapp.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
     webapp.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+    webapp.secret_key = 'z\x16_\x0f\xe2N\xdd\x83^\x07!<'
+
     db.init_app(webapp)
 
     with webapp.app_context():

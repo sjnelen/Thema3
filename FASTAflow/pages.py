@@ -11,7 +11,7 @@ Example:
 __author__ = 'Sam Nelen'
 __version__ = '2024.08.22'
 
-from flask import Blueprint, render_template, request, abort
+from flask import Blueprint, render_template, request, abort, session, redirect, url_for
 import os
 
 from werkzeug.utils import secure_filename
@@ -53,6 +53,12 @@ def about():
 def import_fasta():
     return render_template('import_fasta.html')
 
+@bp.route('/analyse_again')
+def analyse_again():
+    db.session.query(FastaEntry).delete()
+    db.session.commit()
+    return redirect(url_for('pages.import_fasta'))
+
 
 @bp.route('/upload', methods=['POST'])
 def handle_upload():
@@ -71,6 +77,9 @@ def handle_upload():
         werkzeug.exceptions.BadRequest: If there is no file uploaded.
     """
 
+    # Clear the session so no 'analysis_option' is present
+    session.clear()
+
     if 'fastaFile' not in request.files:
         abort(400, description="No file part in the request.")
 
@@ -81,7 +90,7 @@ def handle_upload():
         filepath = os.path.join('temp', filename)
         file.save(filepath)
         headers = ReadFasta(filepath).get_headers()
-        #seq_dict = ReadFasta(filepath).read_file()
+        seq_dict = ReadFasta(filepath).read_file()
 
         for header in headers:
             entry = FastaEntry(
@@ -93,7 +102,7 @@ def handle_upload():
         entries = FastaEntry.query.filter_by(filepath=filepath).all()
 
         if entries:
-            return render_template('fasta.html', headers=entries)
+            return render_template('fasta.html', entries=entries, seq_dict=seq_dict)
         else:
             # Need to implement an error page
             return 'Something is wrong with the fasta file, no headers were found'
@@ -104,8 +113,12 @@ def handle_upload():
 
 @bp.route('/result', methods=['POST', 'GET'])
 def result():
-    # Get a list with the analysis options
-    analysis_options = request.form.getlist('analysis_options')
+    # Store the analysis options in a session
+    if request.method == 'POST':
+        analysis_options = request.form.getlist('analysis_options')
+        session['analysis_options'] = analysis_options
+    else:
+        analysis_options = session.get('analysis_options')
 
     # Get the latest entry in the database
     latest_entry = FastaEntry.query.order_by(FastaEntry.id.desc()).first()
@@ -135,13 +148,16 @@ def plots(header):
 
     #Get the different nucleotide frequencies
     nuc_freq = entry.nuc_freq
+    filepath = entry.filepath
 
     #Create the plots
     graphs = Plots(nuc_freq)
     pie_plot_filename = graphs.pie_plot(header)
     bar_plot_filename = graphs.bar_plot(header)
+    gc_plot_filename = graphs.gc_plot(header, filepath)
 
     return render_template('plots.html',
                            header=header,
                            pie_plot_filename = pie_plot_filename,
-                           bar_plot_filename = bar_plot_filename)
+                           bar_plot_filename = bar_plot_filename,
+                           gc_plot_filename = gc_plot_filename)
