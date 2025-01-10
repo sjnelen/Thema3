@@ -12,62 +12,39 @@ Typical usage example:
 __author__ = 'Sam Nelen'
 __version__ = '2024.08.22'
 
-class ReadFasta:
-    """FASTA file parser class
+from Bio import SeqIO
 
-    Attributes:
-        file (str): Path to the FASTA file.
-        headers (list): List to store the sequence headers.
-        fasta_dict (dict): Dictionary to store header-sequence pairs.
-    """
-
-    def __init__(self, file):
-        """Initializes the ReadFasta class.
-
-        Args:
-            file (str): Path to the FASTA file.
-        """
-        self.file = file
-        self.headers = []
-        self.fasta_dict = {}
+from FASTAflow.models import db, FastaEntry
 
 
-    def get_headers(self):
-        """Extract the headers from the FASTA file.
+def store_fasta_in_db(file):
+  """Reads and parses the FASTA file.
 
-        Returns:
-            list: List of sequence headers.
+  Args:
+      file: Path to the FASTA file.
 
-        Raises:
-            IOError: If the FASTA file cannot be opened or read.
-        """
-        with open(self.file, 'r') as f:
-            for line in f:
-                if line.startswith('>'):
-                    self.headers.append(line.strip())
+  Returns:
+      list: List of Bio.SeqRecord objects representing the sequences in the FASTA file.
 
-        return self.headers
-    
-    def read_file(self):
-        """Reads and parses the FASTA file.
+  Raises:
+      IOError: If the FASTA file cannot be opened or read.
+  """
+  with open(file, 'r') as file_handle:
+        for record in SeqIO.parse(file_handle, 'fasta'):
+            entry = FastaEntry (
+                id = record.id,
+                description = record.description,
+                sequence = str(record.seq),
+                filepath = file
+            )
+            db.session.add(entry)
 
-        Returns:
-            dict: Dictionary with the headers as keys and sequences as values.
-
-        Raises:
-            IOError: If the FASTA file cannot be opened or read.
-        """
-        current_header = None
-        with open(self.file, 'r') as f:
-            for line in f:
-                line = line.strip()
-                if line.startswith('>'):
-                    current_header = line
-                    self.fasta_dict[current_header] = ''
-                elif current_header:
-                    self.fasta_dict[current_header] += line
-
-        return self.fasta_dict
+        try:
+            db.session.commit()
+            print('FASTA file stored in database')
+        except Exception as e:
+            db.session.rollback()
+            print(f'Error storing FASTA file in database: {e}')
 
 
 

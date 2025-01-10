@@ -11,15 +11,16 @@ Example:
 __author__ = 'Sam Nelen'
 __version__ = '2024.08.22'
 
+from Bio.Seq import Seq
 from flask import Blueprint, render_template, request, abort, session, redirect, url_for
+
 import os
-
+import glob
 from werkzeug.utils import secure_filename
-
+import results
+import plots as graphs
 from FASTAflow.models import db, FastaEntry
-from read_fasta import ReadFasta
-from results import Results
-from plots import Plots
+from read_fasta import store_fasta_in_db
 
 bp = Blueprint('pages', __name__)
 
@@ -53,12 +54,6 @@ def about():
 def import_fasta():
     return render_template('import_fasta.html')
 
-@bp.route('/analyse_again')
-def analyse_again():
-    db.session.query(FastaEntry).delete()
-    db.session.commit()
-    return redirect(url_for('pages.import_fasta'))
-
 
 @bp.route('/upload', methods=['POST'])
 def handle_upload():
@@ -89,20 +84,13 @@ def handle_upload():
         filename = secure_filename(file.filename)
         filepath = os.path.join('temp', filename)
         file.save(filepath)
-        headers = ReadFasta(filepath).get_headers()
-        seq_dict = ReadFasta(filepath).read_file()
 
-        for header in headers:
-            entry = FastaEntry(
-                header=header,
-                filepath=filepath)
-            db.session.add(entry)
-        db.session.commit()
+        store_fasta_in_db(filepath)
 
-        entries = FastaEntry.query.filter_by(filepath=filepath).all()
+        entries = FastaEntry.query.all()
 
         if entries:
-            return render_template('fasta.html', entries=entries, seq_dict=seq_dict)
+            return render_template('fasta.html', entries=entries)
         else:
             # Need to implement an error page
             return 'Something is wrong with the fasta file, no headers were found'
@@ -120,44 +108,55 @@ def result():
     else:
         analysis_options = session.get('analysis_options')
 
-    # Get the latest entry in the database
-    latest_entry = FastaEntry.query.order_by(FastaEntry.id.desc()).first()
-    if not latest_entry:
-        abort(400, description="No entry was found in the database")
+    entries = FastaEntry.query.all()
 
-    # Get the filepath and filter the headers based on the filepath
-    filepath = latest_entry.filepath
+    for entry in entries:
+        seq = Seq(entry.sequence)
 
-    # Get the sequence from the file and run the analysis based on the chosen options
-    seq_dict = ReadFasta(filepath).read_file()
-    results = Results(analysis_options, seq_dict)
-    results.run_analysis()
-
-    protein_sequences = results.protein_translation()
-
-    entries = FastaEntry.query.filter_by(filepath=filepath).all()
+        if 'gc_content' in analysis_options:
+            entry.gc_content = results.calc_gc_content(seq)
+        if 'nuc_freq' in analysis_options:
+            entry.nuc_freq = results.calc_nucleotide_frequency(seq)
+        if 'seq_length' in analysis_options:
+            entry.sequence_length = results.calc_sequence_length(seq)
+        if 'to_protein' in analysis_options:
+            entry.protein_seq = results.translate_to_protein(seq)
+        db.session.commit()
 
     return render_template('results.html',
-                           options=analysis_options, protein=protein_sequences, entries=entries)
+                           options=analysis_options, entries=entries)
 
 
 @bp.route('/plots/<header>')
 def plots(header):
     #Get the entry in the database based on the header
-    entry = FastaEntry.query.filter_by(header=header).first()
+    entry = FastaEntry.query.filter_by(description=header).first()
 
-    #Get the different nucleotide frequencies
+    #Get the nucleotide frequencies and the sequence
     nuc_freq = entry.nuc_freq
-    filepath = entry.filepath
+    sequence = entry.sequence
 
     #Create the plots
-    graphs = Plots(nuc_freq)
-    pie_plot_filename = graphs.pie_plot(header)
-    bar_plot_filename = graphs.bar_plot(header)
-    gc_plot_filename = graphs.gc_plot(header, filepath)
+    pie_plot_filename = graphs.pie_plot(header, nuc_freq)
+    bar_plot_filename = graphs.bar_plot(header, nuc_freq)
+    gc_plot_filename = graphs.gc_plot(header, sequence)
 
     return render_template('plots.html',
                            header=header,
                            pie_plot_filename = pie_plot_filename,
                            bar_plot_filename = bar_plot_filename,
                            gc_plot_filename = gc_plot_filename)
+
+
+@bp.route('/analyse_again')
+def analyse_again():
+    # Empty the database with analysis results for a new run
+    db.session.query(FastaEntry).delete()
+    db.session.commit()
+
+    # Delete the plot images from the folder
+    plot_path = 'FASTAflow/static/plots/'
+    for file in glob.glob(plot_path + '*.png'):
+        os.remove(file)
+
+    return redirect(url_for('pages.import_fasta'))

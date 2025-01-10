@@ -34,7 +34,7 @@
                             <tbody>
                             {% for entry in entries %}
                                 <tr>
-                                    <td>{{ entry.header }}</td>
+                                    <td>{{ entry.description }}</td>
                                     {% if 'gc_content' in options %}
                                         <td>{{ entry.gc_content }}</td>
                                     {% endif %}
@@ -42,7 +42,7 @@
                                         <td>{{ entry.sequence_length }}</td>
                                     {% endif %}
                                     {% if 'nuc_freq' in options %}
-                                        <td><a href="{{ url_for('pages.plots', header=entry.header) }}"
+                                        <td><a href="{{ url_for('pages.plots', header=entry.description) }}"
                                                class="btn btn-warning btn-sm">View Plots</a>
                                         </td>
                                     {% endif %}
@@ -60,19 +60,19 @@
                         <h2 class="h4 mb-0">Protein Sequences</h2>
                     </div>
                     <div class="card-body">
-                        {% for header, sequence in protein.items() %}
+                        {% for entry in entries %}
                             <div class="btn-group mb-2 col-10" role="group"
                                  data-bs-toggle="collapse"
                                  data-bs-target="#protein_{{ loop.index }}">
                                 <button class="btn" type="button">
-                                    {{ header }}
+                                    {{ entry.description }}
                                 </button>
                                 <button class="btn btn-outline-dark"><i
                                         class="bi bi-caret-down-fill"></i></button>
                             </div>
                             <div class="collapse" id="protein_{{ loop.index }}">
                                 <pre class="bg-light p-3 rounded text-wrap">
-                                    {{ sequence }}
+                                    {{ entry.protein_seq }}
                                 </pre>
                             </div>
                         {% endfor %}

@@ -61,7 +61,7 @@
                         <div class="collapse show plot-collapse" id="gcPlot">
                             <div class="card">
                                 <div class="card-body">
-                                    <img src="{{ url_for('static', filename='plots/' + gc_plot_filename) }}"
+                                    <img src="data:image/png;base64,{{ gc_plot_filename }}"
                                          class="img-fluid"
                                          alt="Nucleotide frequency pie chart">
                                 </div>
