@@ -8,61 +8,88 @@
     <div class="container mt-5">
         <h1 class="mb-4 text-center">FASTA Analysis Results</h1>
 
-        {% if results %}
+        {% if options %}
             <div class="card mb-4">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-warning-subtle text-white">
                     <h2 class="h4 mb-0">Sequence Summary</h2>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Sequence Header</th>
-                                    {% if 'gc_content' in results %}
-                                        <th>GC Content (%)</th>
-                                    {% endif %}
-                                    {% if 'seq_length' in results %}
-                                        <th>Length (bp)</th>
-                                    {% endif %}
-                                </tr>
+                            <thead class="table">
+                            <tr>
+                                <th>Sequence Header</th>
+                                {% if 'gc_content' in options %}
+                                    <th>GC Content (%)</th>
+                                {% endif %}
+                                {% if 'seq_length' in options %}
+                                    <th>Length (bp)</th>
+                                {% endif %}
+                                {% if 'nuc_freq' in options %}
+                                    <th>Analysis plots</th>
+                                {% endif %}
+
+                            </tr>
                             </thead>
                             <tbody>
-                                {% for header in results['gc_content'].keys() %}
-                                    <tr>
-                                        <td>{{ header }}</td>
-                                        {% if 'gc_content' in results %}
-                                            <td>{{ results['gc_content'][header] }}</td>
-                                        {% endif %}
-                                        {% if 'seq_length' in results %}
-                                            <td>{{ results['seq_length'][header] }}</td>
-                                        {% endif %}
-                                    </tr>
-                                {% endfor %}
+                            {% for entry in entries %}
+                                <tr>
+                                    <td>{{ entry.header }}</td>
+                                    {% if 'gc_content' in options %}
+                                        <td>{{ entry.gc_content }}</td>
+                                    {% endif %}
+                                    {% if 'seq_length' in options %}
+                                        <td>{{ entry.sequence_length }}</td>
+                                    {% endif %}
+                                    {% if 'nuc_freq' in options %}
+                                        <td><a href="{{ url_for('pages.plots', header=entry.header) }}"
+                                               class="btn btn-warning btn-sm">View Plots</a>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-        {% if 'to_protein' in results %}
-            <div class="card">
-                <div class="card-header bg-success text-white">
-                    <h2 class="h4 mb-0">Protein Sequences</h2>
+            {% if 'to_protein' in options %}
+                <div class="card">
+                    <div class="card-header bg-warning-subtle text-white">
+                        <h2 class="h4 mb-0">Protein Sequences</h2>
+                    </div>
+                    <div class="card-body">
+                        {% for header, sequence in protein.items() %}
+                            <div class="btn-group mb-2 col-10" role="group"
+                                 data-bs-toggle="collapse"
+                                 data-bs-target="#protein_{{ loop.index }}">
+                                <button class="btn" type="button">
+                                    {{ header }}
+                                </button>
+                                <button class="btn btn-outline-dark"><i
+                                        class="bi bi-caret-down-fill"></i></button>
+                            </div>
+                            <div class="collapse" id="protein_{{ loop.index }}">
+                                <pre class="bg-light p-3 rounded text-wrap">
+                                    {{ sequence }}
+                                </pre>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
-                <div class="card-body">
-                    {% for header in results['gc_content'].keys() %}
-                        <h3 class="h5 mt-3">{{ header }}</h3>
-                        <pre class="bg-light p-3 rounded"><code>{{ results['to_protein'][header] }}</code></pre>
-                    {% endfor %}
-                </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-warning" role="alert">
+                No analysis results available. Please select an option on the
+                <a href="{{ url_for("pages.handle_upload") }}">
+                    last page
+                </a>.
             </div>
         {% endif %}
 
-        {% else %}
-            <div class="alert alert-warning" role="alert">
-                No analysis results available. Please select an option on the last page.
-            </div>
-        {% endif %}
+        <div class="text-center my-4">
+            <a href="{{ url_for("pages.analyse_again") }}" class="btn btn-warning">Analyze Another File</a>
+        </div>
     </div>
 {% endblock %}

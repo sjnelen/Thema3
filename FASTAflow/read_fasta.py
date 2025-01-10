@@ -1,15 +1,31 @@
+"""FASTA file parsing module for the FASTAflow application
+
+This module provides the functionality for reading and parsing FASTA
+format files. It extracts the headers and sequences
+
+Typical usage example:
+    reader = ReadFasta('path/to/file.fasta')
+    headers = reader.get_headers()
+    sequences = reader.read_file()
 """
-All the function that are performed in the background
-"""
+
 __author__ = 'Sam Nelen'
 __version__ = '2024.08.22'
 
 class ReadFasta:
+    """FASTA file parser class
+
+    Attributes:
+        file (str): Path to the FASTA file.
+        headers (list): List to store the sequence headers.
+        fasta_dict (dict): Dictionary to store header-sequence pairs.
+    """
 
     def __init__(self, file):
-        """
+        """Initializes the ReadFasta class.
 
-        :param file:
+        Args:
+            file (str): Path to the FASTA file.
         """
         self.file = file
         self.headers = []
@@ -17,10 +33,13 @@ class ReadFasta:
 
 
     def get_headers(self):
-        """
-        Opens the file and loops over every line, where the lines starting with a '>'
-        are put in the headers list
-        :return: The headers list
+        """Extract the headers from the FASTA file.
+
+        Returns:
+            list: List of sequence headers.
+
+        Raises:
+            IOError: If the FASTA file cannot be opened or read.
         """
         with open(self.file, 'r') as f:
             for line in f:
@@ -30,9 +49,13 @@ class ReadFasta:
         return self.headers
     
     def read_file(self):
-        """
-        Reads the fasta file and pairs the header and sequence in a dictionary
-        :return: The dictionary of headers and sequence
+        """Reads and parses the FASTA file.
+
+        Returns:
+            dict: Dictionary with the headers as keys and sequences as values.
+
+        Raises:
+            IOError: If the FASTA file cannot be opened or read.
         """
         current_header = None
         with open(self.file, 'r') as f:
