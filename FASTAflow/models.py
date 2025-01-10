@@ -36,9 +36,9 @@ class FastaEntry(db.Model):
 
     Attributes:
         id (int): The primary key of the entry.
-        header (str): The header line of the FASTA sequence, must be unique.
+        description (str): The header line of the FASTA sequence, must be unique.
         filepath (str): The filepath of the FASTA sequence.
-        sequence_lenght (int, optional): The length of the FASTA sequence.
+        sequence_length (int, optional): The length of the FASTA sequence.
         gc_content (int, optional): The GC content of the FASTA sequence.
         nuc_freq (dict, optional): The nucleotide frequencies of the FASTA sequence.
         upload_date (datetime): The date when the sequence was uploaded.
@@ -54,13 +54,16 @@ class FastaEntry(db.Model):
         'seq1 description'
     """
 
-    id = db.Column(db.Integer, primary_key=True)
-    header = db.Column(db.String(500), nullable=False, unique=True)
+    id = db.Column(db.String, primary_key=True)
+    description = db.Column(db.Text, nullable=False)
+    sequence = db.Column(db.Text, nullable=False)
     filepath = db.Column(db.String(500), nullable=False)
     sequence_length = db.Column(db.Integer)
     gc_content = db.Column(db.Float)
     nuc_freq = db.Column(db.PickleType)
+    codon_freq = db.Column(db.PickleType)
+    protein_seq = db.Column(db.Text)
     upload_date = db.Column(db.DateTime, default=db.func.current_timestamp())
 
     def __repr__(self):
-        return f'FastaEntry(header="{self.header}", sequence_length="{self.sequence_length}")'
+        return f'<Sequence {self.id}>'

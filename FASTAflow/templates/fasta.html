@@ -11,14 +11,14 @@
                             <div class="btn-group-lg" role="group"
                                  data-bs-toggle="collapse"
                                  data-bs-target="#sequence_{{ loop.index }}">
-                                <button class="btn d-inline-block">{{ entry.header }}</button>
+                                <button class="btn d-inline-block">{{ entry.description }}</button>
                                 <button class="btn" type="button">
                                     <i class="bi bi-caret-down-fill"></i>
                                 </button>
                             </div>
                             <div class="collapse" id="sequence_{{ loop.index }}">
                                 <pre class="bg-warning-subtle p-3 rounded text-wrap">
-                                    <code>{{ seq_dict[entry.header] }}</code>
+                                    <code>{{ entry.sequence }}</code>
                                 </pre>
                             </div>
                         </li>
