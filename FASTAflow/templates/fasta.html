@@ -3,23 +3,21 @@
 {% block content %}
     <div class="container my-5">
         <div class="card">
-            <h4 class="card-header">Sequences:</h4>
+            <h4 class="card-header bg-warning-subtle">Sequences:</h4>
             <div class="card-body">
                 <form action="{{ url_for("pages.result") }}" method="post" enctype="multipart/form-data" class="mt-3">
                     <ul class="list-group list-group-flush">
                         {% for entry in entries %}
                         <li class="list-group-item">
-                            <div class="btn-group-lg" role="group"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#sequence_{{ loop.index }}">
-                                <button class="btn d-inline-block" type="button">{{ entry.description }}</button>
-                                <button class="btn" type="button">
-                                    <i class="bi bi-caret-down-fill"></i>
+                            <div class="btn-group-lg mb-2" role="group" data-bs-toggle="collapse"
+                                 data-bs-target="#sequence_{{ loop.index }}">
+                                <button class="btn btn-outline-secondary text-white d-inline-block align-text-top" type="button">
+                                    {{ entry.description }} <i class="bi bi-caret-down-fill"></i>
                                 </button>
                             </div>
                             <div class="collapse" id="sequence_{{ loop.index }}">
                                 <pre class="bg-warning-subtle p-3 rounded text-wrap">
-                                    <code>{{ entry.sequence[:100] }}</code>
+                                    <code>{{ entry.sequence[:100] }}...</code>
                                 </pre>
                             </div>
                             <div class="form-check">
@@ -36,7 +34,7 @@
                 </form>
             </div>
             <div class="card-footer text-body-secondary">
-                Click on the header to show the sequences
+                Click on the header to show the first 100 nucleotides of the corresponding sequence.
             </div>
         </div>
     </div>

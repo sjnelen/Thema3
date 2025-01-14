@@ -103,28 +103,24 @@ def handle_upload():
 def result():
     # Store the analysis options in a session
     if request.method == 'POST':
-        analysis_options = request.form.getlist('analysis_options')
-        session['analysis_options'] = analysis_options
+        selected_sequences = request.form.getlist('selected_sequences')
+        session['selected_sequences'] = selected_sequences
     else:
-        analysis_options = session.get('analysis_options')
+        selected_sequences = session.get('selected_sequences')
 
-    entries = FastaEntry.query.all()
+    entries = FastaEntry.query.filter(FastaEntry.id.in_(selected_sequences)).all()
 
     for entry in entries:
         seq = Seq(entry.sequence)
 
-        if 'gc_content' in analysis_options:
-            entry.gc_content = results.calc_gc_content(seq)
-        if 'nuc_freq' in analysis_options:
-            entry.nuc_freq = results.calc_nucleotide_frequency(seq)
-        if 'seq_length' in analysis_options:
-            entry.sequence_length = results.calc_sequence_length(seq)
-        if 'to_protein' in analysis_options:
-            entry.protein_seq = results.translate_to_protein(seq)
+        entry.gc_content = results.calc_gc_content(seq)
+        entry.nuc_freq = results.calc_nucleotide_frequency(seq)
+        entry.sequence_length = results.calc_sequence_length(seq)
+        entry.protein_seq = results.translate_to_protein(seq)
+
         db.session.commit()
 
-    return render_template('results.html',
-                           options=analysis_options, entries=entries)
+    return render_template('results.html', entries=entries)
 
 
 @bp.route('/plots/<header>')
