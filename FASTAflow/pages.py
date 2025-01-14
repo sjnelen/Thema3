@@ -128,13 +128,12 @@ def plots(header):
     #Get the entry in the database based on the header
     entry = FastaEntry.query.filter_by(description=header).first()
 
-    #Get the nucleotide frequencies and the sequence
-    nuc_freq = entry.nuc_freq
     sequence = entry.sequence
+    nuc_freq = entry.nuc_freq
+    protein_seq = entry.protein_seq
 
-    #Create the plots
     pie_plot_filename = graphs.pie_plot(header, nuc_freq)
-    bar_plot_filename = graphs.bar_plot(header, nuc_freq)
+    bar_plot_filename = graphs.bar_plot(header, protein_seq)
     gc_plot_filename = graphs.gc_plot(header, sequence)
 
     return render_template('plots.html',
