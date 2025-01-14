@@ -5,60 +5,39 @@
         <div class="card">
             <h4 class="card-header">Sequences:</h4>
             <div class="card-body">
-                <ul class="list-group list-group-flush">
-                    {% for entry in entries %}
+                <form action="{{ url_for("pages.result") }}" method="post" enctype="multipart/form-data" class="mt-3">
+                    <ul class="list-group list-group-flush">
+                        {% for entry in entries %}
                         <li class="list-group-item">
                             <div class="btn-group-lg" role="group"
-                                 data-bs-toggle="collapse"
-                                 data-bs-target="#sequence_{{ loop.index }}">
-                                <button class="btn d-inline-block">{{ entry.description }}</button>
+                                data-bs-toggle="collapse"
+                                data-bs-target="#sequence_{{ loop.index }}">
+                                <button class="btn d-inline-block" type="button">{{ entry.description }}</button>
                                 <button class="btn" type="button">
                                     <i class="bi bi-caret-down-fill"></i>
                                 </button>
                             </div>
                             <div class="collapse" id="sequence_{{ loop.index }}">
                                 <pre class="bg-warning-subtle p-3 rounded text-wrap">
-                                    <code>{{ entry.sequence }}</code>
+                                    <code>{{ entry.sequence[:100] }}</code>
                                 </pre>
                             </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="check_{{ loop.index }}"
+                                       name="selected_sequences" value="{{ entry.id }}">
+                                <label class="form-check-label" for="check_{{ loop.index }}">
+                                    Analyze this sequence
+                                </label>
+                            </div>
                         </li>
-                    {% endfor %}
-                </ul>
+                        {% endfor %}
+                    </ul>
+                    <button type="submit" class="btn btn-warning">Start analysis</button>
+                </form>
             </div>
             <div class="card-footer text-body-secondary">
-                Click on the header to show the different sequences
+                Click on the header to show the sequences
             </div>
         </div>
-        <form action="{{ url_for("pages.result") }}" method="post" enctype="multipart/form-data" class="mt-3">
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="gc_content" name="analysis_options"
-                       value="gc_content">
-                <label class="form-check-label" for="gc_content">
-                    Calculate GC content
-                </label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="to_protein" name="analysis_options"
-                       value="to_protein">
-                <label class="form-check-label" for="to_protein">
-                    Form protein
-                </label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="seq_length" name="analysis_options"
-                       value="seq_length">
-                <label class="form-check-label" for="seq_length">
-                    Sequence length
-                </label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="nuc_freq" name="analysis_options"
-                       value="nuc_freq">
-                <label class="form-check-label" for="nuc_freq">
-                    Nucleotide frequencies
-                </label>
-            </div>
-            <button type="submit" class="btn btn-warning">Start analysis</button>
-        </form>
     </div>
 {% endblock %}
