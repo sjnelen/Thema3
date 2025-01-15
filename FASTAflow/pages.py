@@ -12,11 +12,12 @@ __author__ = 'Sam Nelen'
 __version__ = '2024.08.22'
 
 from Bio.Seq import Seq
-from flask import Blueprint, render_template, request, abort, session, redirect, url_for
-
+from flask import Blueprint, render_template, request, session, redirect, url_for
 import os
 import glob
 from werkzeug.utils import secure_filename
+import logging
+
 import results
 import plots as graphs
 from FASTAflow.models import db, FastaEntry
@@ -36,7 +37,6 @@ def allowed_file(filename):
     Returns:
         bool: True if the file extension is allowed, False otherwise.
     """
-
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
@@ -57,68 +57,82 @@ def import_fasta():
 
 @bp.route('/upload', methods=['POST'])
 def handle_upload():
-    """Handles the FASTA file uploads and processes them
+    try:
+        # Clear the session for new uploads
+        session.clear()
 
-    Processes the uploaded file by:
-    1. Validating the file type
-    2. Saving to a temporary location
-    3. Extracting the headers
-    4. Storing in the database
+        # Make sure the request is correct and a correct file is uploaded
+        if 'fastaFile' not in request.files:
+            return render_template('error.html',
+                                   error='The FASTA file was not found in the request')
 
-    Returns:
-        str: Rendered HTML template with headers or error message.
+        file = request.files['fastaFile']
+        if not file.filename:
+            return render_template('error.html',
+                                   error='No file selected for upload, please choose a file before proceeding')
 
-    Raises:
-        werkzeug.exceptions.BadRequest: If there is no file uploaded.
-    """
+        if not allowed_file(file.filename):
+            return render_template('error.html',
+                                   error=f'Invalid file type: {file.filename}, please choose a FASTA file')
 
-    # Clear the session so no 'analysis_option' is present
-    session.clear()
-
-    if 'fastaFile' not in request.files:
-        abort(400, description="No file part in the request.")
-
-    file = request.files['fastaFile']
-
-    if file and allowed_file(file.filename):
+        # Create temporary file for processing
         filename = secure_filename(file.filename)
-        filepath = os.path.join('temp', filename)
-        file.save(filepath)
+        fasta_filepath = os.path.join('temp', filename)
+        os.makedirs('temp', exist_ok=True)
 
-        store_fasta_in_db(filepath)
+        # Save the file
+        try:
+            file.save(fasta_filepath)
+        except IOError as e:
+            logging.error(f'Failed to save the uploaded file: {e}')
+            return render_template('error.html',
+                                   error='Failed to save the uploaded file, please try again'), 500
 
-        entries = FastaEntry.query.all()
+        try:
+            entries = store_fasta_in_db(fasta_filepath)
+            os.remove(fasta_filepath)
 
-        if entries:
+            if not entries:
+                return render_template('error.html',
+                                       error='No sequences were found in the file'), 400
+
             return render_template('fasta.html', entries=entries)
-        else:
-            # Need to implement an error page
-            return 'Something is wrong with the fasta file, no headers were found'
-    else:
-        # Need to implement an error page
-        return f'invalid filetype: {file.filename}'
+
+        except ValueError as e:
+            logging.error(f'Failed to process the uploaded file: {e}')
+            return render_template('error.html',
+                                   error='Failed to process the uploaded file, please try again'), 500
+        except Exception as e:
+            logging.error(f'An unexpected error occurred: {e}')
+            return render_template('error.html',
+                                   error='An unexpected error occurred, please try again'), 500
+
+    finally:
+        if 'fastaFile' in locals() and os.path.exists(fasta_filepath):
+            os.remove(fasta_filepath)
 
 
 @bp.route('/result', methods=['POST', 'GET'])
 def result():
-    # Store the analysis options in a session
     if request.method == 'POST':
         selected_sequences = request.form.getlist('selected_sequences')
         session['selected_sequences'] = selected_sequences
+
+        entries = FastaEntry.query.filter(FastaEntry.id.in_(selected_sequences)).all()
+
+        for entry in entries:
+            seq = Seq(entry.sequence)
+
+            entry.gc_content = results.calc_gc_content(seq)
+            entry.nuc_freq = results.calc_nucleotide_frequency(seq)
+            entry.sequence_length = results.calc_sequence_length(seq)
+            entry.protein_seq = results.translate_to_protein(seq)
     else:
         selected_sequences = session.get('selected_sequences')
+        entries = FastaEntry.query.filter(FastaEntry.id.in_(selected_sequences)).all()
 
-    entries = FastaEntry.query.filter(FastaEntry.id.in_(selected_sequences)).all()
 
-    for entry in entries:
-        seq = Seq(entry.sequence)
-
-        entry.gc_content = results.calc_gc_content(seq)
-        entry.nuc_freq = results.calc_nucleotide_frequency(seq)
-        entry.sequence_length = results.calc_sequence_length(seq)
-        entry.protein_seq = results.translate_to_protein(seq)
-
-        db.session.commit()
+    db.session.commit()
 
     return render_template('results.html', entries=entries)
 
