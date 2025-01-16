@@ -36,14 +36,22 @@ def store_fasta_in_db(filepath):
     try:
         with open(filepath, 'r') as file_handle:
             for record in SeqIO.parse(file_handle, 'fasta'):
-                entry = FastaEntry(
-                    id=record.id,
-                    description=record.description,
-                    sequence=str(record.seq),
-                    filepath=filepath
-                )
+                # Check if sequence id already is in the database
+                entry = db.session.query(FastaEntry).filter_by(id=record.id).first()
+
+                if entry:
+                    logging.info(f'Sequence with ID {record.id} already exists in the database, using existing entry')
+                else:
+                    # Create new entry if it doesn't exist
+                    entry = FastaEntry(
+                        id=record.id,
+                        description=record.description,
+                        sequence=str(record.seq),
+                        filepath=filepath
+                    )
+                    db.session.add(entry)
+
                 entries.append(entry)
-                db.session.add(entry)
     
         db.session.commit()
         logging.info(f'Stored {len(entries)} sequences from {filepath} in the database')
