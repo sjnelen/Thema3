@@ -120,19 +120,19 @@ def result():
 
         entries = FastaEntry.query.filter(FastaEntry.id.in_(selected_sequences)).all()
 
+        # Run al the analysis
         for entry in entries:
             seq = Seq(entry.sequence)
 
-            entry.gc_content = results.calc_gc_content(seq)
-            entry.nuc_freq = results.calc_nucleotide_frequency(seq)
-            entry.sequence_length = results.calc_sequence_length(seq)
+            entry.gc_content = results.calculate_gc_content(seq)
+            entry.nuc_freq = results.calculate_nucleotide_frequency(seq)
+            entry.sequence_length = results.calculate_sequence_length(seq)
             entry.protein_seq = results.translate_to_protein(seq)
+
+        db.session.commit()
     else:
         selected_sequences = session.get('selected_sequences')
         entries = FastaEntry.query.filter(FastaEntry.id.in_(selected_sequences)).all()
-
-
-    db.session.commit()
 
     return render_template('results.html', entries=entries)
 
@@ -144,17 +144,17 @@ def plots(header):
 
     sequence = entry.sequence
     nuc_freq = entry.nuc_freq
-    protein_seq = entry.protein_seq
+    amino_freq = results.amino_acids_frequencies(entry.protein_seq)
 
-    pie_plot_filename = graphs.pie_plot(header, nuc_freq)
-    bar_plot_filename = graphs.bar_plot(header, protein_seq)
-    gc_plot_filename = graphs.gc_plot(header, sequence)
+    pie_plot = graphs.pie_plot(header, nuc_freq)
+    bar_plot = graphs.bar_plot(header, amino_freq)
+    gc_plot = graphs.gc_plot(header, sequence)
 
     return render_template('plots.html',
                            header=header,
-                           pie_plot_filename = pie_plot_filename,
-                           bar_plot_filename = bar_plot_filename,
-                           gc_plot_filename = gc_plot_filename)
+                           pie_plot = pie_plot,
+                           bar_plot = bar_plot,
+                           gc_plot = gc_plot)
 
 
 @bp.route('/analyse_again')

@@ -29,7 +29,7 @@
                         <div class="collapse show plot-collapse" id="pieChart">
                             <div class="card">
                                 <div class="card-body">
-                                    <img src="{{ pie_plot_filename }}"
+                                    <img src="{{ pie_plot }}"
                                          class="img-fluid"
                                          alt="Nucleotide frequency pie chart">
                                 </div>
@@ -45,7 +45,7 @@
                         <div class="collapse show plot-collapse" id="barChart">
                             <div class="card">
                                 <div class="card-body">
-                                    <img src="{{ bar_plot_filename }}"
+                                    <img src="{{ bar_plot }}"
                                          class="img-fluid"
                                          alt="Nucleotide frequency pie chart">
                                 </div>
@@ -61,7 +61,7 @@
                         <div class="collapse show plot-collapse" id="gcPlot">
                             <div class="card">
                                 <div class="card-body">
-                                    <img src="{{ gc_plot_filename }}"
+                                    <img src="{{ gc_plot }}"
                                          class="img-fluid"
                                          alt="Nucleotide frequency pie chart">
                                 </div>
@@ -74,7 +74,7 @@
         </div>
 
         <div class="text-center m-2">
-            <a href="{{ url_for('pages.result') }}" class="btn btn-secondary">Back to Results</a>
+            <a href="{{ url_for('pages.result') }}" class="btn btn-warning">Back to Results</a>
         </div>
     </div>
 {% endblock content %}

@@ -11,23 +11,20 @@ Typical usage example:
 __author__ = 'Sam Nelen'
 __version__ = '2024.08.22'
 
-
 from Bio.SeqUtils import gc_fraction
 from Bio.Seq import Seq
-from collections import Counter
 
-def calc_gc_content(sequence):
+def calculate_gc_content(sequence):
     """Calculates the GC content of the sequences.
 
     Updates the database with GC content percentages for each sequence.
     """
-
     if not sequence:
-        return 0.0
+        return 0.0 # Return 0 when sequence has no value
 
     return round(gc_fraction(sequence) * 100, 2)
 
-def calc_nucleotide_frequency(sequence):
+def calculate_nucleotide_frequency(sequence):
     """Calculates the nucleotide frequency of the sequences.
 
     Updates the database with nucleotide frequency for each sequence.
@@ -43,7 +40,7 @@ def calc_nucleotide_frequency(sequence):
     frequencies = {nuc : round((count / seq_len) * 100, 2) for nuc, count in counts.items()}
     return frequencies
 
-def calc_sequence_length(sequence):
+def calculate_sequence_length(sequence):
     """Calculates the sequence length of the sequences.
 
     Updates the database with sequence length for each sequence.
@@ -56,6 +53,16 @@ def translate_to_protein(sequence):
     except Exception as e:
         print(f'Error translating sequence: {e}')
         return '?' * (len(sequence)//3)
+
+def amino_acids_frequencies(protein_seq):
+    amino_counts = {}
+
+    for amino in protein_seq:
+        amino_counts[amino] = amino_counts.get(amino, 0) + 1
+
+    frequencies = {amino : round(count / len(protein_seq) * 100, 2) for amino, count in amino_counts.items()}
+
+    return frequencies
 
 
 
