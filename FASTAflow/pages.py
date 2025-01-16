@@ -10,9 +10,8 @@ __author__ = 'Sam Nelen'
 __version__ = '2025.01.16'
 
 from Bio.Seq import Seq
-from flask import Blueprint, render_template, request, session, redirect, url_for
+from flask import Blueprint, render_template, request, session
 import os
-import glob
 from werkzeug.utils import secure_filename
 import logging
 
@@ -27,13 +26,18 @@ ALLOWED_EXTENSIONS = {'fasta', 'fas', 'fa', 'fna', 'ffn', 'faa', 'mpfa', 'frn'}
 
 
 def allowed_file(filename):
-    """Validates if the uploaded file has a FASTA extension.
+    """
+    Check if a file has an allowed extension.
 
-    Args:
-        filename (string): The name of the uploaded file.
+    This function determines if a given filename corresponds to a file
+    with an extension from the list of allowed extensions. It checks for
+    the presence of a file extension and validates it against a predefined
+    list of allowed extensions.
 
-    Returns:
-        bool: True if the file extension is allowed, False otherwise.
+    :param filename: A string representing the name of the file whose
+        extension needs to be validated.
+    :returns: A boolean value indicating whether the given file extension
+        is allowed or not.
     """
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -154,7 +158,7 @@ def result():
         selected_sequences = request.form.getlist('selected_sequences')
         session['selected_sequences'] = selected_sequences
 
-        entries = FastaEntry.query.filter(FastaEntry.id.in_(selected_sequences)).all()
+        entries = db.session.query(FastaEntry).id.in_(selected_sequences).all()
 
         # Run al the analysis
         for entry in entries:
@@ -168,7 +172,7 @@ def result():
         db.session.commit()
     else:
         selected_sequences = session.get('selected_sequences')
-        entries = FastaEntry.query.filter(FastaEntry.id.in_(selected_sequences)).all()
+        entries = db.session.query(FastaEntry).id.in_(selected_sequences).all()
 
     return render_template('results.html', entries=entries)
 
@@ -190,7 +194,7 @@ def plots(header):
         `header`.
     """
     #Get the entry in the database based on the header
-    entry = FastaEntry.query.filter_by(description=header).first()
+    entry = db.session.query(FastaEntry).filter_by(description=header).first()
 
     sequence = entry.sequence
     nuc_freq = entry.nuc_freq
