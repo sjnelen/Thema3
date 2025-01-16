@@ -1,16 +1,13 @@
-"""FASTA file parsing module for the FASTAflow application
+"""
+This module provides functionality for reading and storing sequences from FASTA files into a database.
 
-This module provides the functionality for reading and parsing FASTA
-format files. It extracts the headers and sequences
-
-Typical usage example:
-    reader = ReadFasta('path/to/file.fasta')
-    headers = reader.get_headers()
-    sequences = reader.read_file()
+It uses Biopython for parsing FASTA files and SQLAlchemy for interacting with the database.
+Sequences that are already in the database are not duplicated, while new sequences are added.
+Error handling is implemented for file I/O and database operations.
 """
 
 __author__ = 'Sam Nelen'
-__version__ = '2024.08.22'
+__version__ = '2025.01.16'
 
 from Bio import SeqIO
 import logging

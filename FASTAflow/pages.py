@@ -1,15 +1,13 @@
-"""Page routing and request handling for the application
-
-This module contains all the route definitions and request handlers for the
-web application. It controls the file uploads, processing, and result
-visualization.
-
-Example:
-    bp = Blueprint('pages', __name__)
 """
+Module handling routes and functionality for a Flask-based web application.
 
+This module includes view functions for rendering pages, handling uploaded FASTA files, 
+processing data, and generating results/plots. It interacts with a database to store 
+fasta file contents and computes various analyses including GC content, nucleotide frequency, 
+sequence translation, and analysis plots.
+"""
 __author__ = 'Sam Nelen'
-__version__ = '2024.08.22'
+__version__ = '2025.01.16'
 
 from Bio.Seq import Seq
 from flask import Blueprint, render_template, request, session, redirect, url_for
@@ -42,21 +40,48 @@ def allowed_file(filename):
 
 @bp.route('/')
 def home():
+    """
+    Route handler for the '/' endpoint, rendering the 'home.html' template.
+
+    :return: Rendered HTML content of the home page.
+    """
     return render_template('home.html')
 
 
 @bp.route('/about')
 def about():
+    """
+    Route handler for the '/about' endpoint, rendering the 'about.html' template.
+
+    :return: Rendered HTML content of the 'about' page.
+    """
     return render_template('about.html')
 
 
 @bp.route('/import_fasta')
 def import_fasta():
+    """
+    Route handler for the '/import_fasta' endpoint, rendering the 'import_fasta.html' template.
+
+    :return: Rendered HTML content of the 'import_fasta' page.
+    """
     return render_template('import_fasta.html')
 
 
 @bp.route('/upload', methods=['POST'])
 def handle_upload():
+    """
+    Handles the upload of a FASTA file via a POST request. Validates the request,
+    processes the uploaded file, and parses its contents to store in the database.
+
+    :returns: An HTML page rendered with results or error messages depending on 
+        the success or failure of the upload and processing.
+
+    :raises ValueError: If the file processing encounters invalid data or fails
+        to extract any sequences.
+    :raises IOError: If saving the uploaded file to disk fails due to I/O issues.
+    :raises Exception: For unexpected errors during file processing.
+    """
     try:
         # Clear the session for new uploads
         session.clear()
@@ -114,6 +139,17 @@ def handle_upload():
 
 @bp.route('/result', methods=['POST', 'GET'])
 def result():
+    """
+    Handles the processing and rendering of the 'result' endpoint. Depending on the HTTP
+    method, either processes data submitted via a POST request or retrieves data via a GET
+    request. In the case of a POST request, analyzes sequences submitted by users and updates
+    the database with calculated metrics. For a GET request, fetches the sequences previously
+    selected by the user from the session. Ultimately, renders the 'results.html' template with
+    the processed data.
+
+    :return: Renders the 'results.html' template along with processed sequence entries or
+             the previously selected entries.
+    """
     if request.method == 'POST':
         selected_sequences = request.form.getlist('selected_sequences')
         session['selected_sequences'] = selected_sequences
@@ -139,6 +175,20 @@ def result():
 
 @bp.route('/plots/<header>')
 def plots(header):
+    """
+    Generates and returns various plots for a given database entry based on the
+    provided header. The function retrieves the entry from the database, computes
+    nucleotide and amino acid frequencies, and creates corresponding visualizations
+    for rendering on a web page. The generated plots include a pie chart for
+    nucleotide frequencies, a bar chart for amino acid frequencies, and a GC-content
+    plot.
+
+    :param header: The sequence header used to query the database for a
+        corresponding `FastaEntry`.
+    :type header: str
+    :return: Rendered HTML template displaying the generated plots for the given
+        `header`.
+    """
     #Get the entry in the database based on the header
     entry = FastaEntry.query.filter_by(description=header).first()
 

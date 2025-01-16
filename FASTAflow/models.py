@@ -1,57 +1,60 @@
-"""Database module for the FASTAflow application
+"""
+This module defines a SQLAlchemy model for storing and analyzing FASTA sequence entries.
 
-This module initializes the sqlite3 database for storing sequence variables
-and some analysis results.
+The main class `FastaEntry` represents individual FASTA sequences with relevant metadata,
+enabling storage and retrieval of sequence data and analysis results. It includes attributes like 
+sequence length, GC content, nucleotide frequencies, and more.
 
-Attributes:
-    db (SQLAlchemy): The SQLAlchemy database instance
-
-Typical usage example:
-    from FASTAflow.models import db, FastaEntry
-
-    # Create a new entry
-    entry = FastaEntry(
-        header = '>sequence1',
-        filepath = '/path/to/file.fasta'
-    )
-    db.session.add(entry)
-    db.session.commit()
-
-    # Query entries
-    entries = FastaEntry.query.all()
+Classes:
+    FastaEntry: A SQLAlchemy model for storing and managing sequence data and results.
 """
 
 __author__ = 'Sam Nelen'
-__version__ = '2024.08.22'
+__version__ = '2025.01.16'
 
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
 class FastaEntry(db.Model):
-    """SQLAlchemy model for storing sequence variables and their analysis results.
+    """
+    Represents a FASTA file entry containing metadata and sequence information.
 
-    This model represents a single FASTA sequence entry and its metadata, including
-    analysis results like GC content.
+    The FastaEntry class models information for a single sequence entry in
+    a FASTA file, including sequence data, associated description, file path,
+    and calculated statistics such as nucleotide and codon frequencies, GC
+    content, and protein sequence. It also records the upload date of the
+    entry for tracking purposes.
 
-    Attributes:
-        id (int): The primary key of the entry.
-        description (str): The header line of the FASTA sequence, must be unique.
-        filepath (str): The filepath of the FASTA sequence.
-        sequence_length (int, optional): The length of the FASTA sequence.
-        gc_content (int, optional): The GC content of the FASTA sequence.
-        nuc_freq (dict, optional): The nucleotide frequencies of the FASTA sequence.
-        upload_date (datetime): The date when the sequence was uploaded.
-
-    Example:
-        entry = FastaEntry(
-            header = '>sequence1',
-            filepath = '/path/to/file.fasta'
-        )
-        db.session.add(entry)
-        db.session.commit()
-        print(entry)
-        'seq1 description'
+    :ivar id: Unique identifier for the sequence entry (e.g., a sequence
+        accession number or custom ID).
+    :type id: str
+    :ivar description: Description or header associated with the FASTA sequence,
+        typically found after the '>' symbol in a FASTA format.
+    :type description: str
+    :ivar sequence: The nucleotide sequence in the FASTA entry.
+    :type sequence: str
+    :ivar filepath: Path to the file where the FASTA sequence is stored.
+    :type filepath: str
+    :ivar sequence_length: Length of the nucleotide sequence.
+    :type sequence_length: int
+    :ivar gc_content: The calculated GC content (percentage of G and C bases in
+        the sequence).
+    :type gc_content: float
+    :ivar nuc_freq: Nucleotide frequency data stored as a serialized object.
+        Typically, a dictionary where keys are nucleotides ('A', 'T', 'C', 'G')
+        and values are their occurrence counts.
+    :type nuc_freq: dict
+    :ivar codon_freq: Codon frequency data stored as a serialized object.
+        Typically, a dictionary where keys are codons (triplets of nucleotides)
+        and values are their occurrence counts.
+    :type codon_freq: dict
+    :ivar protein_seq: Translated protein sequence corresponding to the FASTA
+        nucleotide sequence, if applicable.
+    :type protein_seq: str
+    :ivar upload_date: Timestamp indicating when the FASTA entry was uploaded
+        to the system.
+    :type upload_date: datetime
     """
 
     id = db.Column(db.String, primary_key=True)

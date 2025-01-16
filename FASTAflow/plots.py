@@ -1,16 +1,14 @@
-"""Visualization module for sequence analysis results
+"""
+This module contains functions for generating visualizations of biological sequence data.
 
-This module provides plotting capabilities for visualizing multiple
-sequence analysis results using matplotlib.
-
-Typical usage example:
-    plots = Plots(nucleotide_frequencies)
-    pie_chart = plots.pie_chart(sequence_header)
-    bar_chart = plots.bar_chart(sequence_header)
+Functions:
+- pie_plot: Generates a pie chart for nucleotide frequencies.
+- bar_plot: Creates a bar chart for amino acid frequencies.
+- gc_plot: Produces a line plot for GC content across a given sequence.
 """
 
 __author__ = 'Sam Nelen'
-__version__ = '2024.08.22'
+__version__ = '2025.01.16'
 
 import base64
 import io

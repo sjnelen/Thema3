@@ -1,15 +1,11 @@
-"""Sequence analysis module for the FASTAflow application
+"""
+This module provides utility functions for analyzing DNA and protein sequences. 
 
-This module provides various sequence analysis functions including GC content
-calculations, nucleotide frequency analysis, sequence length calculations,
-and protein translation.
-
-Typical usage example:
-    analyzer = Results(['gc_content', 'seq_length'], sequences)
-    results = analyzer.run_analysis()
+It includes methods for calculating GC content, nucleotide frequency, and sequence length, as well as 
+translating a DNA sequence into a protein sequence and calculating amino acid frequencies.
 """
 __author__ = 'Sam Nelen'
-__version__ = '2024.08.22'
+__version__ = '2025.01.16'
 
 from Bio.SeqUtils import gc_fraction
 from Bio.Seq import Seq

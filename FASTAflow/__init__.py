@@ -1,17 +1,12 @@
-"""The main Flask web application for FASTAflow
+"""
+This module initializes and configures the FASTAflow Flask application.
 
-This module initializes the Flask application, sets up the database configuration,
-and creates the app's blueprints. It provides the core setup functionality for the
-web application.
-
-Example:
-    To create and run the application:
-        app = create_app()
-        app.run(port=8000)
+It defines a factory function that creates and configures the Flask application,
+initializes the database connection, and sets up necessary components like blueprints.
 """
 
 __author__ = 'Sam Nelen'
-__version__ = '2024.08.22'
+__version__ = '2025.01.16'
 
 import os
 
