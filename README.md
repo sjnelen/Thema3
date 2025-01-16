@@ -13,14 +13,18 @@ and plots about a few stats to the user.
 * Translate a protein sequence
 * Visualize some stats in plots
 
-## Usage
-All the development and testing happened in Pycharm so here are the steps for
-creating the environment.
-1. Open Pycharm and select 'open'
-2. Choose the FASTAflow directory in the systems file picker
-3. ...
+## Installation
+
+1. Clone the repository: `git clone 'https://github.com/sjnelen/Thema3.git'
+2. Create a virtual environment: `python -m venv venv`
+3. Activate the virtual environment: `source venv/bin/activate`
+4. Install dependencies: `pip install -r requirements.txt`
+5. Run the application: `python run.py`
 
 ## Contacts
 Name: Sam Nelen  
 Email: s.j.nelen@st.hanze.nl  
 Organization: [Hanze Hogeschool](https://www.hanze.nl/nl) 
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
