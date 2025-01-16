@@ -9,14 +9,14 @@ sequence translation, and analysis plots.
 __author__ = 'Sam Nelen'
 __version__ = '2025.01.16'
 
-from Bio.Seq import Seq
-from flask import Blueprint, render_template, request, session
-import os
-from werkzeug.utils import secure_filename
 import logging
+import os
 
-import results
+from flask import Blueprint, render_template, request, session
+from werkzeug.utils import secure_filename
+
 import plots as graphs
+import results
 from FASTAflow.models import db, FastaEntry
 from read_fasta import store_fasta_in_db
 
@@ -158,21 +158,25 @@ def result():
         selected_sequences = request.form.getlist('selected_sequences')
         session['selected_sequences'] = selected_sequences
 
-        entries = db.session.query(FastaEntry).id.in_(selected_sequences).all()
+        if not selected_sequences:
+            return render_template('error.html',
+                                   error='No sequences were selected, please select at least one sequence')
+
+        entries = db.session.query(FastaEntry).filter(FastaEntry.id.in_(selected_sequences)).all()
 
         # Run al the analysis
         for entry in entries:
-            seq = Seq(entry.sequence)
+            seq = entry.sequence
 
             entry.gc_content = results.calculate_gc_content(seq)
             entry.nuc_freq = results.calculate_nucleotide_frequency(seq)
-            entry.sequence_length = results.calculate_sequence_length(seq)
+            entry.sequence_length = len(seq)
             entry.protein_seq = results.translate_to_protein(seq)
 
         db.session.commit()
     else:
         selected_sequences = session.get('selected_sequences')
-        entries = db.session.query(FastaEntry).id.in_(selected_sequences).all()
+        entries = db.session.query(FastaEntry).filter(FastaEntry.id.in_(selected_sequences)).all()
 
     return render_template('results.html', entries=entries)
 
@@ -193,7 +197,7 @@ def plots(header):
     :return: Rendered HTML template displaying the generated plots for the given
         `header`.
     """
-    #Get the entry in the database based on the header
+    # Get the entry in the database based on the header
     entry = db.session.query(FastaEntry).filter_by(description=header).first()
 
     sequence = entry.sequence
@@ -206,6 +210,6 @@ def plots(header):
 
     return render_template('plots.html',
                            header=header,
-                           pie_plot = pie_plot,
-                           bar_plot = bar_plot,
-                           gc_plot = gc_plot)
+                           pie_plot=pie_plot,
+                           bar_plot=bar_plot,
+                           gc_plot=gc_plot)

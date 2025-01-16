@@ -17,16 +17,19 @@ from FASTAflow.models import db, FastaEntry
 
 
 def store_fasta_in_db(filepath):
-    """Reads and parses the FASTA file.
-    
-    Args:
-      filepath: Path to the FASTA file.
-    
-    Returns:
-      list: List of Bio.SeqRecord objects representing the sequences in the FASTA file.
-    
-    Raises:
-      IOError: If the FASTA file cannot be opened or read.
+    """
+    Stores sequences from a given FASTA file into a database. If a sequence with the
+    same identifier already exists in the database, it reuses the existing database
+    entry; otherwise, it creates a new entry for the sequence.
+
+    :param filepath: The path to the FASTA file containing sequence information.
+    :type filepath: str
+    :return: A list of `FastaEntry` objects corresponding to the sequences stored
+             into the database.
+    :rtype: list[FastaEntry]
+    :raises ValueError: If the FASTA file cannot be read or sequences cannot
+                        be stored due to an error with the database or other
+                        unexpected issues.
     """
     entries = []
     

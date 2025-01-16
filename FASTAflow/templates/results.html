@@ -8,67 +8,59 @@
     <div class="container mt-5">
         <h1 class="mb-4 text-center">FASTA Analysis Results</h1>
 
-        {% if entries %}
-            <div class="card mb-4">
-                <div class="card-header bg-warning-subtle text-white">
-                    <h2 class="h4 mb-0">Sequence Summary</h2>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table">
+        <div class="card mb-4">
+            <div class="card-header bg-warning-subtle text-white">
+                <h2 class="h4 mb-0">Sequence Summary</h2>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table">
+                        <tr>
+                            <th>Sequence Header</th>
+                            <th>GC Content (%)</th>
+                            <th>Length (bp)</th>
+                            <th>Analysis plots</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for entry in entries %}
                             <tr>
-                                <th>Sequence Header</th>
-                                    <th>GC Content (%)</th>
-                                    <th>Length (bp)</th>
-                                    <th>Analysis plots</th>
+                                <td>{{ entry.description }}</td>
+                                <td>{{ entry.gc_content }}</td>
+                                <td>{{ entry.sequence_length }}</td>
+                                <td><a href="{{ url_for('pages.plots', header=entry.description) }}"
+                                       class="btn btn-warning btn-sm">View Plots</a>
+                                </td>
                             </tr>
-                            </thead>
-                            <tbody>
-                            {% for entry in entries %}
-                                <tr>
-                                    <td>{{ entry.description }}</td>
-                                        <td>{{ entry.gc_content }}</td>
-                                        <td>{{ entry.sequence_length }}</td>
-                                        <td><a href="{{ url_for('pages.plots', header=entry.description) }}"
-                                               class="btn btn-warning btn-sm">View Plots</a>
-                                        </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="card">
-                <div class="card-header bg-warning-subtle text-white">
-                    <h2 class="h4 mb-0">Protein Sequences</h2>
-                </div>
-                <div class="card-body">
-                    {% for entry in entries %}
-                        <div class="btn-group mb-2" role="group"
-                             data-bs-toggle="collapse"
-                             data-bs-target="#protein_{{ loop.index }}">
-                            <button class="btn btn-outline-secondary text-white d-inline-block align-text-bottom" type="button">
-                                {{ entry.description }} <i class="bi bi-caret-down-fill"></i>
-                            </button>
-                        </div>
-                        <div class="collapse" id="protein_{{ loop.index }}">
+        </div>
+        <div class="card">
+            <div class="card-header bg-warning-subtle text-white">
+                <h2 class="h4 mb-0">Protein Sequences</h2>
+            </div>
+            <div class="card-body">
+                {% for entry in entries %}
+                    <div class="btn-group mb-2" role="group"
+                         data-bs-toggle="collapse"
+                         data-bs-target="#protein_{{ loop.index }}">
+                        <button class="btn btn-outline-secondary text-white d-inline-block align-text-bottom"
+                                type="button">
+                            {{ entry.description }} <i class="bi bi-caret-down-fill"></i>
+                        </button>
+                    </div>
+                    <div class="collapse" id="protein_{{ loop.index }}">
                             <pre class="bg-warning-subtle p-3 rounded text-wrap">
                                 <code>{{ entry.protein_seq }}</code>
                             </pre>
-                        </div>
-                    {% endfor %}
-                </div>
+                    </div>
+                {% endfor %}
             </div>
-        {% else %}
-            <div class="alert alert-warning" role="alert">
-                No analysis results available. Please select an option on the
-                <a href="{{ url_for("pages.analyse_again") }}">
-                    last page
-                </a>.
-            </div>
-        {% endif %}
+        </div>
 
         <div class="text-center my-4">
             <a href="{{ url_for("pages.import_fasta") }}" class="btn btn-warning">Analyze Another File</a>
