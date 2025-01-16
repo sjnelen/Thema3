@@ -96,7 +96,7 @@ def handle_upload():
                 return render_template('error.html',
                                        error='No sequences were found in the file'), 400
 
-            return render_template('fasta.html', entries=entries)
+            return render_template('choose_seq.html', entries=entries)
 
         except ValueError as e:
             logging.error(f'Failed to process the uploaded file: {e}')
@@ -155,17 +155,3 @@ def plots(header):
                            pie_plot = pie_plot,
                            bar_plot = bar_plot,
                            gc_plot = gc_plot)
-
-
-@bp.route('/analyse_again')
-def analyse_again():
-    # Empty the database with analysis results for a new run
-    db.session.query(FastaEntry).delete()
-    db.session.commit()
-
-    # Delete the plot images from the folder
-    plot_path = 'FASTAflow/static/plots/'
-    for file in glob.glob(plot_path + '*.png'):
-        os.remove(file)
-
-    return redirect(url_for('pages.import_fasta'))
