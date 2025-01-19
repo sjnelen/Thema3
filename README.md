@@ -16,7 +16,7 @@ and plots about a few stats to the user.
 ## Installation
 For running the flask app from the commandline the following commands set up a starting
 point for development. When the last command is executed a webserver will be started 
-binding to `localhost` on `127.0.0.1`. Then the website can be visited when going to the
+binding to `localhost` on `127.0.0.1:8000`. Then the website can be visited when going to the
 following url: `http://localhost:8000` in your browser.
 
 1. Clone the repository: `git clone 'https://github.com/sjnelen/Thema3.git'`
