@@ -8,10 +8,6 @@ sequence length, GC content, nucleotide frequencies, and more.
 Classes:
     FastaEntry: A SQLAlchemy model for storing and managing sequence data and results.
 """
-
-__author__ = 'Sam Nelen'
-__version__ = '2025.01.16'
-
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()

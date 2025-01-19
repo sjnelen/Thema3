@@ -6,19 +6,14 @@ processing data, and generating results/plots. It interacts with a database to s
 fasta file contents and computes various analyses including GC content, nucleotide frequency, 
 sequence translation, and analysis plots.
 """
-__author__ = 'Sam Nelen'
-__version__ = '2025.01.16'
-
 import logging
 import os
 
 from flask import Blueprint, render_template, request, session
 from werkzeug.utils import secure_filename
 
-import plots as graphs
-import results
-from modules.models import db, FastaEntry
-from read_fasta import store_fasta_in_db
+from FASTAflow.modules import results, read_fasta, plots
+from FASTAflow.modules.models import db, FastaEntry
 
 bp = Blueprint('pages', __name__)
 
@@ -118,7 +113,7 @@ def handle_upload():
                                    error='Failed to save the uploaded file, please try again'), 500
 
         try:
-            entries = store_fasta_in_db(fasta_filepath)
+            entries = read_fasta.store_fasta_in_db(fasta_filepath)
             os.remove(fasta_filepath)
 
             if not entries:
@@ -182,7 +177,7 @@ def result():
 
 
 @bp.route('/plots/<header>')
-def plots(header):
+def generate_plots(header):
     """
     Generates and returns various plots for a given database entry based on the
     provided header. The function retrieves the entry from the database, computes
@@ -200,16 +195,16 @@ def plots(header):
     # Get the entry in the database based on the header
     entry = db.session.query(FastaEntry).filter_by(description=header).first()
 
-    sequence = entry.sequence
     nuc_freq = entry.nuc_freq
+    sequence = entry.sequence
     amino_freq = results.amino_acids_frequencies(entry.protein_seq)
 
-    pie_plot = graphs.pie_plot(header, nuc_freq)
-    bar_plot = graphs.bar_plot(header, amino_freq)
-    gc_plot = graphs.gc_plot(header, sequence)
+    nuc_freq_plot = plots.pie_plot(header, nuc_freq)
+    amino_freq_plot = plots.bar_plot(header, amino_freq)
+    gc_content_plot = plots.gc_plot(header, sequence)
 
     return render_template('plots.html',
                            header=header,
-                           pie_plot=pie_plot,
-                           bar_plot=bar_plot,
-                           gc_plot=gc_plot)
+                           pie_plot=nuc_freq_plot,
+                           bar_plot=amino_freq_plot,
+                           gc_plot=gc_content_plot)

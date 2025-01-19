@@ -29,7 +29,7 @@
                                 <td>{{ entry.description }}</td>
                                 <td>{{ entry.gc_content }}</td>
                                 <td>{{ entry.sequence_length }}</td>
-                                <td><a href="{{ url_for('pages.plots', header=entry.description) }}"
+                                <td><a href="{{ url_for('pages.generate_plots', header=entry.description) }}"
                                        class="btn btn-warning btn-sm">View Plots</a>
                                 </td>
                             </tr>
