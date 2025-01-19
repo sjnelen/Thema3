@@ -58,7 +58,11 @@ To set up a IDE follow the steps below for the IDE of my choice Pycharm.
    - Instead of **script** select the **module** option, and type in **FASTAflow**
    - Hit apply and now you can start the server from Pycharm
 
-
+## Working with flask-migrate
+Flaks migrate is a useful tool when a database is in use with the flask application. Especially when the application
+is run in production. When the database undergoes changes the flask-migrate tool helps with migrating the database 
+schema without losing data. All the documentation can be found on their site which can be found in the Acknowledgments
+section
 
 ## Contacts
 Name: Sam Nelen  
