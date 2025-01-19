@@ -13,7 +13,7 @@ from Bio import SeqIO
 import logging
 from sqlalchemy.exc import SQLAlchemyError
 
-from .models import db, FastaEntry
+from modules.models import db, FastaEntry
 
 
 def store_fasta_in_db(filepath):
