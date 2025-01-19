@@ -35,7 +35,30 @@ For seamless database integration and management.
 - **[Flask-Migrate](https://flask-migrate.readthedocs.io/)**: To handle database migrations effortlessly.  
 - **[Matplotlib](https://matplotlib.org/)**: For generating visualizations and plots.  
 - **[NumPy](https://numpy.org/)**: For efficient numerical computations.  
-- **[Jinja2](https://palletsprojects.com/p/jinja/)**: Used as the templating engine to render dynamic web pages.  
+- **[Jinja2](https://palletsprojects.com/p/jinja/)**: Used as the templating engine to render dynamic web pages.
+
+## Development in the Pycharm ide
+To set up a IDE follow the steps below for the IDE of my choice Pycharm. 
+1. **Clone the repository**
+   * Open pycharm and select **File > New project > Get from version control**
+   * Paste the repository url `https://github.com/sjnelen/Thema3.git`
+
+2. **Set Up a Virtual Environment, if not done automatically**  
+   - Navigate to **File > Settings > Python Interpreter** (or **Preferences** on macOS).  
+   - Click the gear icon, then select **Add Interpreter > Add Local Interpreter > Virtual Environment**.  
+   - Point to the `venv` folder if it's already created, or let PyCharm create a new one in the project directory.  
+
+3. **Install Dependencies**  
+   - Open the terminal in PyCharm (or use the PyCharm interface to manage dependencies).  
+   - Run: `pip install -r requirements.txt`
+
+4. **Set up the flask run configuration**
+   - Go to **Run > Edit configurations** 
+   - Click the **+** icon to add a new configuration and select **Python**
+   - Instead of **script** select the **module** option, and type in **FASTAflow**
+   - Hit apply and now you can start the server from Pycharm
+
+
 
 ## Contacts
 Name: Sam Nelen  
