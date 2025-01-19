@@ -12,8 +12,8 @@ import os
 
 from flask import Flask
 
-from FASTAflow.models import db
-from FASTAflow import pages
+from .models import db
+import pages
 
 
 def create_app():
