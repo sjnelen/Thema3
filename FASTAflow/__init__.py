@@ -13,7 +13,7 @@ import os
 from flask import Flask
 
 from .models import db
-import pages
+from FASTAflow import pages
 
 
 def create_app():
