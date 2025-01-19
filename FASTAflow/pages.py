@@ -17,8 +17,8 @@ from werkzeug.utils import secure_filename
 
 import plots as graphs
 import results
-from FASTAflow.models import db, FastaEntry
-from read_fasta import store_fasta_in_db
+from .models import db, FastaEntry
+from .read_fasta import store_fasta_in_db
 
 bp = Blueprint('pages', __name__)
 
