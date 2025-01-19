@@ -5,10 +5,6 @@ It uses Biopython for parsing FASTA files and SQLAlchemy for interacting with th
 Sequences that are already in the database are not duplicated, while new sequences are added.
 Error handling is implemented for file I/O and database operations.
 """
-
-__author__ = 'Sam Nelen'
-__version__ = '2025.01.16'
-
 from Bio import SeqIO
 import logging
 from sqlalchemy.exc import SQLAlchemyError

@@ -6,12 +6,15 @@ Functions:
 - bar_plot: Creates a bar chart for amino acid frequencies.
 - gc_plot: Produces a line plot for GC content across a given sequence.
 """
+import matplotlib
 import base64
 import io
 import matplotlib.pyplot as plt
 
 # Set global font size for all plots
 plt.rcParams.update({'font.size': 20})
+
+matplotlib.use('Agg')
 
 def _set_plot_styling(ax, title):
     """Sets the common styling for all plots."""
