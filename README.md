@@ -2,7 +2,7 @@
 
 ## Description
 FASTAflow is a small web application that allows users to upload and analyse small 
-FASTA files. When the analysis is finished the web application will show some results 
+FASTA files, max 16mb in size. When the analysis is finished the web application will show some results 
 and plots about a few stats to the user.
 
 ## Features

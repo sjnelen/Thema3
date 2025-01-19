@@ -49,7 +49,7 @@ def create_app(config_object=None):
     # Configure middleware
     app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)  # Handle proxy headers
 
-    # Add version info into template context
+    # Add version info into template context for every html template
     @app.context_processor
     def inject_version():
         return dict(version=__version__)
