@@ -58,11 +58,18 @@ To set up a IDE follow the steps below for the IDE of my choice Pycharm.
    - Instead of **script** select the **module** option, and type in **FASTAflow**
    - Hit apply and now you can start the server from Pycharm
 
-## Working with flask-migrate
-Flaks migrate is a useful tool when a database is in use with the flask application. Especially when the application
-is run in production. When the database undergoes changes the flask-migrate tool helps with migrating the database 
-schema without losing data. All the documentation can be found on their site which can be found in the Acknowledgments
-section
+## Setting up for production use
+When setting up this flask application for a production environment, there are some things to consider.
+A `.env` file for the following environment values is necessary:
+- `FLASK_ENV='production'`
+- `FLASK_SECRET_KEY=..` A flask secret key for certain security features. Make sure it is a long random string, and never
+expose it in your code repository or make it public.
+- `DATABASE_URL=..` The database path to set where the database is stored. Following the linse of 'sqlite:////path/to/database.db'
+
+Furthermore, flask migrate is a useful tool when a database is in use with the flask application. Especially when the 
+application is run in production. When the database undergoes changes, like adding or removing a column, the flask-migrate 
+tool helps with migrating the database schema without losing data. All the documentation can be found on their site which 
+can be found in the Acknowledgments section.
 
 ## Contacts
 Name: Sam Nelen  
