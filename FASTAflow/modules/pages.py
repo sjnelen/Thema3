@@ -12,13 +12,11 @@ import os
 from flask import Blueprint, render_template, request, session
 from werkzeug.utils import secure_filename
 
+from FASTAflow.config import Config
 from FASTAflow.modules import results, read_fasta, plots
 from FASTAflow.modules.models import db, FastaEntry
 
 bp = Blueprint('pages', __name__)
-
-ALLOWED_EXTENSIONS = {'fasta', 'fas', 'fa', 'fna', 'ffn', 'faa', 'mpfa', 'frn'}
-
 
 def allowed_file(filename):
     """
@@ -34,7 +32,7 @@ def allowed_file(filename):
     :returns: A boolean value indicating whether the given file extension
         is allowed or not.
     """
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in Config.ALLOWED_EXTENSIONS
 
 
 @bp.route('/')
@@ -89,12 +87,10 @@ def handle_upload():
         if 'fastaFile' not in request.files:
             return render_template('error.html',
                                    error='The FASTA file was not found in the request')
-
         file = request.files['fastaFile']
         if not file.filename:
             return render_template('error.html',
                                    error='No file selected for upload, please choose a file before proceeding')
-
         if not allowed_file(file.filename):
             return render_template('error.html',
                                    error=f'Invalid file type: {file.filename}, please choose a FASTA file')
@@ -104,7 +100,7 @@ def handle_upload():
         fasta_filepath = os.path.join('temp', filename)
         os.makedirs('temp', exist_ok=True)
 
-        # Save the file
+        # Saves the file in the temp folder
         try:
             file.save(fasta_filepath)
         except IOError as e:
@@ -112,6 +108,7 @@ def handle_upload():
             return render_template('error.html',
                                    error='Failed to save the uploaded file, please try again'), 500
 
+        # Reads the files and stores the attributes in the database
         try:
             entries = read_fasta.store_fasta_in_db(fasta_filepath)
             os.remove(fasta_filepath)
@@ -121,7 +118,6 @@ def handle_upload():
                                        error='No sequences were found in the file'), 400
 
             return render_template('choose_seq.html', entries=entries)
-
         except ValueError as e:
             logging.error(f'Failed to process the uploaded file: {e}')
             return render_template('error.html',
@@ -130,7 +126,7 @@ def handle_upload():
             logging.error(f'An unexpected error occurred: {e}')
             return render_template('error.html',
                                    error='An unexpected error occurred, please try again'), 500
-
+    # Always removes the file from the temp directory
     finally:
         if 'fastaFile' in locals() and os.path.exists(fasta_filepath):
             os.remove(fasta_filepath)
@@ -149,6 +145,7 @@ def result():
     :return: Renders the 'results.html' template along with processed sequence entries or
              the previously selected entries.
     """
+    # Check the request method
     if request.method == 'POST':
         selected_sequences = request.form.getlist('selected_sequences')
         session['selected_sequences'] = selected_sequences
@@ -159,7 +156,7 @@ def result():
 
         entries = db.session.query(FastaEntry).filter(FastaEntry.id.in_(selected_sequences)).all()
 
-        # Run al the analysis
+        # Run al the analysis per sequence
         for entry in entries:
             seq = entry.sequence
 
@@ -199,6 +196,7 @@ def generate_plots(header):
     sequence = entry.sequence
     amino_freq = results.amino_acids_frequencies(entry.protein_seq)
 
+    # Creates the plots shown on the page
     nuc_freq_plot = plots.pie_plot(header, nuc_freq)
     amino_freq_plot = plots.bar_plot(header, amino_freq)
     gc_content_plot = plots.gc_plot(header, sequence)

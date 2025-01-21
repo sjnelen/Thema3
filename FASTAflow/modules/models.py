@@ -10,6 +10,7 @@ Classes:
 """
 from flask_sqlalchemy import SQLAlchemy
 
+# Creates db object for the database connection
 db = SQLAlchemy()
 
 class FastaEntry(db.Model):

@@ -32,7 +32,7 @@ def store_fasta_in_db(filepath):
     try:
         with open(filepath, 'r') as file_handle:
             for record in SeqIO.parse(file_handle, 'fasta'):
-                # Check if sequence id already is in the database
+                # Check if sequence id is already in the database
                 entry = db.session.query(FastaEntry).filter_by(id=record.id).first()
 
                 if entry:
@@ -52,7 +52,6 @@ def store_fasta_in_db(filepath):
         db.session.commit()
         logging.info(f'Stored {len(entries)} sequences from {filepath} in the database')
         return entries
-
     except IOError as e:
         raise ValueError(f'Failed to read the FASTA file: {e}')
     except SQLAlchemyError as e:

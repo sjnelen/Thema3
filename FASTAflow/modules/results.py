@@ -27,6 +27,7 @@ def calculate_gc_content(sequence):
     if not sequence:
         return 0.0 # Return 0 when sequence has no value
 
+    # Calculate the gc-content percentage
     return round(gc_fraction(sequence) * 100, 2)
 
 
@@ -55,6 +56,7 @@ def calculate_nucleotide_frequency(sequence):
     for nucleotide in sequence:
         counts[nucleotide] = counts.get(nucleotide, 0) + 1
 
+    # Calculates the nucleotide frequencies percentages
     frequencies = {nuc : round((count / seq_len) * 100, 2) for nuc, count in counts.items()}
     return frequencies
 
@@ -71,6 +73,7 @@ def translate_to_protein(sequence):
              of the same length as possible amino acids if an error occurs.
     :rtype: str
     """
+    # Use the Biopython translate function
     try:
         return str(Seq(sequence).translate())
     except Exception as e:
@@ -98,8 +101,8 @@ def amino_acids_frequencies(protein_seq):
     for amino in protein_seq:
         amino_counts[amino] = amino_counts.get(amino, 0) + 1
 
+    # Calculates the amino acid frequencies in percentages
     frequencies = {amino : round(count / len(protein_seq) * 100, 2) for amino, count in amino_counts.items()}
-
     return frequencies
 
 

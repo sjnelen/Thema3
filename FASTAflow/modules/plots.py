@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 # Set global font size for all plots
 plt.rcParams.update({'font.size': 20})
 
+# Set a matplotlib backend
 matplotlib.use('Agg')
 
 def _set_plot_styling(ax, title):
@@ -80,7 +81,7 @@ def bar_plot(header, amino_freq):
         applications requiring inline image rendering.
     :rtype: str
     """
-    # Create the plot
+    # Create the bar plot
     fig, ax = plt.subplots(figsize=(12, 7.5))
     amino_acids = list(amino_freq.keys())
     frequencies = list(amino_freq.values())
@@ -118,6 +119,7 @@ def gc_plot(header, sequence):
     # Create line plot
     fig, ax = plt.subplots(figsize=(24, 6))
     ax.plot(gc_content)
+
     ax.set_title(f'GC content for {header}', wrap=True, color='white', pad=20)
     ax.set_ylabel('GC content (%)', color='white')
     ax.set_xlabel('Position in sequence', color='white')

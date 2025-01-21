@@ -46,7 +46,7 @@ def create_app(config_object=None):
     # Register blueprints
     app.register_blueprint(pages.bp)
 
-    # Configure middleware
+    # Configure middleware for when used behind a reverse proxy like Nginx
     app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)  # Handle proxy headers
 
     # Add version info into template context for every html template
