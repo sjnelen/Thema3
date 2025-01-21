@@ -25,18 +25,6 @@ following url: `http://localhost:8000` in your browser.
 4. Install dependencies: `pip install -r requirements.txt`
 5. Run the application: `python -m FASTAflow`
 
-## Acknowledgments  
-FASTAflow is built with the help of several open-source tools and libraries.
-
-- **[Biopython](https://biopython.org/)**: Essential for parsing FASTA files and performing biological sequence operations.  
-- **[Flask](https://flask.palletsprojects.com/)**: A lightweight web framework for building the application.  
-- **[Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/)** and **[SQLAlchemy](https://www.sqlalchemy.org/)**: 
-For seamless database integration and management.  
-- **[Flask-Migrate](https://flask-migrate.readthedocs.io/)**: To handle database migrations effortlessly.  
-- **[Matplotlib](https://matplotlib.org/)**: For generating visualizations and plots.  
-- **[NumPy](https://numpy.org/)**: For efficient numerical computations.  
-- **[Jinja2](https://palletsprojects.com/p/jinja/)**: Used as the templating engine to render dynamic web pages.
-
 ## Development in the Pycharm ide
 To set up a IDE follow the steps below for the IDE of my choice Pycharm. 
 1. **Clone the repository**
@@ -70,6 +58,18 @@ Furthermore, flask migrate is a useful tool when a database is in use with the f
 application is run in production. When the database undergoes changes, like adding or removing a column, the flask-migrate 
 tool helps with migrating the database schema without losing data. All the documentation can be found on their site which 
 can be found in the Acknowledgments section.
+
+## Acknowledgments  
+FASTAflow is built with the help of several open-source tools and libraries.
+
+- **[Biopython](https://biopython.org/)**: Essential for parsing FASTA files and performing biological sequence operations.  
+- **[Flask](https://flask.palletsprojects.com/)**: A lightweight web framework for building the application.  
+- **[Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/)** and **[SQLAlchemy](https://www.sqlalchemy.org/)**: 
+For seamless database integration and management.  
+- **[Flask-Migrate](https://flask-migrate.readthedocs.io/)**: To handle database migrations effortlessly.  
+- **[Matplotlib](https://matplotlib.org/)**: For generating visualizations and plots.  
+- **[NumPy](https://numpy.org/)**: For efficient numerical computations.  
+- **[Jinja2](https://palletsprojects.com/p/jinja/)**: Used as the templating engine to render dynamic web pages.
 
 ## Contacts
 Name: Sam Nelen  
